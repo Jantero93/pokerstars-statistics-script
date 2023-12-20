@@ -19,7 +19,7 @@ type Game = (typeof games)[keyof typeof games];
 const playedHands: Record<Game, number> = {
   "7 Card Stud": 0,
   "7 Card Stud Hi/Lo": 0,
-  "Razz": 0,
+  Razz: 0,
   "Triple Draw 2-7 Lowball": 0,
   "Hold'em No Limit": 0,
   "Hold'em Limit": 0,
@@ -120,8 +120,18 @@ const logHandsByGame = () => {
   console.log(`\nAll played hands:        ${allCount}`);
   console.log("\n");
   console.log("=============================");
+
+  if (playedHands.UNKNOWN > 0) {
+    console.log(
+      "\x1b[31m",
+      "\n***** THERE WERE UNKNOWN GAMES *****\n",
+      "\x1b[0m",
+    );
+  }
 };
 
-countHandsInFolder("C:\\Users\\Janzk\\AppData\\Local\\PokerStars\\HandHistory\\jant999");
+countHandsInFolder(
+  "C:\\Users\\Janzk\\AppData\\Local\\PokerStars\\HandHistory\\jant999",
+);
 
 logHandsByGame();
