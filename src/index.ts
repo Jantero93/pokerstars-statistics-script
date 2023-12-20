@@ -92,10 +92,6 @@ const addPlayedHandToGameGroup = (hands: string[]) => {
 };
 
 const logHandsByGame = () => {
-  console.log("\n");
-  console.log("=============================");
-  console.log("\n");
-
   const sortedGames = Object.keys(playedHands).sort(
     (a, b) => playedHands[b as Game] - playedHands[a as Game],
   );
@@ -117,9 +113,7 @@ const logHandsByGame = () => {
     (sum, count) => sum + count,
     0,
   );
-  console.log(`\nAll played hands:        ${allCount}`);
-  console.log("\n");
-  console.log("=============================");
+  console.log(`\nAll played hands         ${allCount}`);
 
   if (playedHands.UNKNOWN > 0) {
     console.log(
