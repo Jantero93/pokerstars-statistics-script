@@ -1,5 +1,6 @@
 import * as fs from "fs";
 import * as path from "path";
+import ENV from "./env";
 
 const games = {
   sevenCardStud: "7 Card Stud",
@@ -124,8 +125,6 @@ const logHandsByGame = () => {
   }
 };
 
-countHandsInFolder(
-  "C:\\Users\\Janzk\\AppData\\Local\\PokerStars\\HandHistory\\jant999",
-);
+countHandsInFolder(ENV.historyFolderPath);
 
 logHandsByGame();
