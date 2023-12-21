@@ -15,9 +15,7 @@ const games = {
   UNKNOWN: "UNKNOWN",
 } as const;
 
-type Game = (typeof games)[keyof typeof games];
-
-const playedHands: Record<Game, number> = {
+const playedHands: Record<string, number> = {
   "7 Card Stud": 0,
   "7 Card Stud Hi/Lo": 0,
   Razz: 0,
@@ -46,44 +44,33 @@ const countHandsInFolder = (folderPath: string) =>
     .forEach((filename) => countHandsInFile(path.join(folderPath, filename)));
 
 const addPlayedHandToGameGroup = (hands: string[]) => {
-  const {
-    holdEmLimit,
-    holdEmNolimit,
-    omahaHiLoLimit,
-    omahaHiLoPotLimit,
-    omahaPotLimit,
-    razz,
-    sevenCardStud,
-    sevenCardStudHiLo,
-    tripleDrawLowball,
-  } = games;
   hands.forEach((hand) => {
     switch (true) {
-      case hand.includes(sevenCardStudHiLo):
+      case hand.includes(games.sevenCardStudHiLo):
         playedHands["7 Card Stud Hi/Lo"]++;
         break;
-      case hand.includes(sevenCardStud):
+      case hand.includes(games.sevenCardStud):
         playedHands["7 Card Stud"]++;
         break;
-      case hand.includes(holdEmLimit):
+      case hand.includes(games.holdEmLimit):
         playedHands["Hold'em Limit"]++;
         break;
-      case hand.includes(holdEmNolimit):
+      case hand.includes(games.holdEmNolimit):
         playedHands["Hold'em No Limit"]++;
         break;
-      case hand.includes(omahaHiLoLimit):
+      case hand.includes(games.omahaHiLoLimit):
         playedHands["Omaha Hi/Lo Limit"]++;
         break;
-      case hand.includes(omahaHiLoPotLimit):
+      case hand.includes(games.omahaHiLoPotLimit):
         playedHands["Omaha Hi/Lo Pot Limit"]++;
         break;
-      case hand.includes(tripleDrawLowball):
+      case hand.includes(games.tripleDrawLowball):
         playedHands["Triple Draw 2-7 Lowball"]++;
         break;
-      case hand.includes(omahaPotLimit):
+      case hand.includes(games.omahaPotLimit):
         playedHands["Omaha Pot Limit"]++;
         break;
-      case hand.includes(razz):
+      case hand.includes(games.razz):
         playedHands["Razz"]++;
         break;
       default:
@@ -94,7 +81,7 @@ const addPlayedHandToGameGroup = (hands: string[]) => {
 
 const logHandsByGame = () => {
   const sortedGames = Object.keys(playedHands).sort(
-    (a, b) => playedHands[b as Game] - playedHands[a as Game],
+    (a, b) => playedHands[b] - playedHands[a],
   );
 
   const maxGameNameLength = sortedGames.reduce(
@@ -102,13 +89,14 @@ const logHandsByGame = () => {
     0,
   );
 
-  for (const game of sortedGames) {
-    const gameCount = playedHands[game as Game];
-    if (gameCount !== 0) {
-      const spaces = " ".repeat(maxGameNameLength - game.length + 2); // Add 2 extra spaces
-      console.log(`${game}${spaces}${gameCount}`);
-    }
-  }
+  sortedGames.forEach((game) => {
+    const gameCount = playedHands[game];
+
+    if (gameCount === 0) return;
+
+    const spaces = " ".repeat(maxGameNameLength - game.length + 2); // Add 2 extra spaces
+    console.log(`${game}${spaces}${gameCount}`);
+  });
 
   const allCount = Object.values(playedHands).reduce(
     (sum, count) => sum + count,
@@ -125,6 +113,9 @@ const logHandsByGame = () => {
   }
 };
 
+/**
+ * Set absolute path to PokerStar folder where is hand history stored
+ */
 countHandsInFolder(ENV.historyFolderPath);
 
 logHandsByGame();
