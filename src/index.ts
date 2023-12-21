@@ -2,6 +2,11 @@ import * as fs from "fs";
 import * as path from "path";
 import ENV from "./env";
 
+/**
+ * Array of unrecognized hands
+ */
+const unknownHands: string[] = [];
+
 const games = {
   sevenCardStud: "7 Card Stud",
   sevenCardStudHiLo: "7 Card Stud Hi/Lo",
@@ -75,6 +80,7 @@ const addPlayedHandToGameGroup = (hands: string[]) => {
         break;
       default:
         playedHands.UNKNOWN++;
+        unknownHands.push(hand);
     }
   });
 };
@@ -105,11 +111,7 @@ const logHandsByGame = () => {
   console.log(`\nAll played hands         ${allCount}`);
 
   if (playedHands.UNKNOWN > 0) {
-    console.log(
-      "\x1b[31m",
-      "\n***** THERE WERE UNKNOWN GAMES *****\n",
-      "\x1b[0m",
-    );
+    printErrorIfUnknownGamesExists();
   }
 };
 
@@ -119,3 +121,12 @@ const logHandsByGame = () => {
 countHandsInFolder(ENV.historyFolderPath);
 
 logHandsByGame();
+
+function printErrorIfUnknownGamesExists() {
+  console.log(
+    "\x1b[31m",
+    "\n***** THERE WERE UNKNOWN GAMES *****\n",
+    "\x1b[0m",
+  );
+  console.log(new Set(unknownHands));
+}
