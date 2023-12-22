@@ -4,6 +4,6 @@
     "prettier.trailingComma": "none",
     "prettier.endOfLine": "auto",
     "prettier.arrowParens": "always",
-    "prettier.printWidth": 80,
+    "prettier.printWidth": 100,
     "prettier.tabWidth": 2
 }

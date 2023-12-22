@@ -5,7 +5,7 @@ import ENV from "./env";
 /**
  * Array of unrecognized hands
  */
-const unknownHands: string[] = [];
+const unknownHandsList: string[] = [];
 
 type PokerGame =
   | "7 Card Stud Hi/Lo"
@@ -36,10 +36,10 @@ const readAllHandHistoryFiles = (folderPath: string) =>
     .readdirSync(folderPath)
     .filter((filename) => filename.endsWith(".txt"))
     .forEach((filename) =>
-      getHandLinesFromFiles(path.join(folderPath, filename)),
+      getHandLinesFromFile(path.join(folderPath, filename)),
     );
 
-const getHandLinesFromFiles = (filePath: string) => {
+const getHandLinesFromFile = (filePath: string) => {
   const content = fs.readFileSync(filePath, "utf8");
   const handPattern = /PokerStars Hand #\d+/g;
 
@@ -48,8 +48,8 @@ const getHandLinesFromFiles = (filePath: string) => {
   calculatePlayedHands(matchingLines);
 };
 
-const calculatePlayedHands = (textLines: string[]) =>
-  textLines.forEach((handTextLine) => {
+const calculatePlayedHands = (handLineTexts: string[]) =>
+  handLineTexts.forEach((textLine) => {
     const pokerGames: PokerGame[] = [
       "7 Card Stud Hi/Lo",
       "7 Card Stud",
@@ -62,11 +62,12 @@ const calculatePlayedHands = (textLines: string[]) =>
       "Razz",
     ];
 
-    const matchedGame = pokerGames.find((game) => handTextLine.includes(game));
+    const matchedGame = pokerGames.find((game) => textLine.includes(game));
 
     if (!matchedGame) {
       playedHands.UNKNOWN++;
-      unknownHands.push(handTextLine);
+      // Push unknown hand and then print it later
+      unknownHandsList.push(textLine);
       return;
     }
 
@@ -74,7 +75,7 @@ const calculatePlayedHands = (textLines: string[]) =>
   });
 
 const logPlayedHands = () => {
-  // Sort bu played hands descending
+  // Sort by played hands descending
   const sortedGames = Object.keys(playedHands).sort(
     (a, b) =>
       playedHands[b as PokerGame | "UNKNOWN"] -
@@ -87,38 +88,54 @@ const logPlayedHands = () => {
     0,
   );
 
+  printHandStatsHeader();
+
   sortedGames.forEach((game) => {
     const gameCount = playedHands[game as PokerGame | "UNKNOWN"];
 
+    // Log only played games
     if (gameCount === 0) return;
 
     const spaces = " ".repeat(maxGameNameLength - game.length + 2); // Add 2 extra spaces
-    console.log(`${game}${spaces}${gameCount}`);
+    console.log(`${game}${spaces}${gameCount.toLocaleString("fi-Fi")}`);
   });
 
   const allCount = Object.values(playedHands).reduce(
     (sum, count) => sum + count,
     0,
   );
-  console.log(`\nAll played hands         ${allCount}`);
 
-  if (playedHands.UNKNOWN > 0) {
-    printErrorIfUnknownGamesExists();
-  }
+  const logSpaces = " ".repeat(9);
+  console.log(
+    `\x1b[96m\nAll played hands${logSpaces}${allCount.toLocaleString(
+      "fi-Fi",
+    )}\x1b[0m`,
+  );
+
+  if (unknownHandsList.length || playedHands.UNKNOWN) printErrorLog();
 };
 
 /**
  * Set absolute path to PokerStar folder where hand history is stored
  */
-readAllHandHistoryFiles(ENV.historyFolderPath);
+readAllHandHistoryFiles(ENV.handHistoryFolderPath);
 
 logPlayedHands();
 
-function printErrorIfUnknownGamesExists() {
+function printErrorLog() {
   console.log(
-    "\x1b[31m",
-    "\n***** THERE WERE UNKNOWN GAMES *****\n",
-    "\x1b[0m",
+    "\x1b[33m", // Set text color to yellow
+    "\n***** THERE WERE UNKNOWN HANDS / GAMES *****\n",
+    "\x1b[0m", // Reset text color to default
   );
-  console.log(new Set(unknownHands));
+  console.log(
+    "\x1b[31m", // Set text color to red
+    unknownHandsList,
+    "\x1b[0m", // Reset text color to default
+  );
+}
+
+function printHandStatsHeader() {
+  const message = "Playerd hands by game";
+  console.log(`\x1b[35m${message}\x1b[0m`);
 }
