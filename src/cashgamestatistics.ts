@@ -3,10 +3,18 @@ import * as fs from "fs";
 import * as path from "path";
 import ENV from "./env";
 
+const SUMMARY_HEADER = "*** SUMMARY ***";
+const POKERSTARTS_HEADER = "PokerStars Hand #";
+
 type LosingTerm = "folded" | "lost" | "mucked";
 type WinningTerm = "collected" | "won";
+type ActionTerm = "bets" | "calls" | "raises" | "posts";
+type Term = WinningTerm | LosingTerm | ActionTerm;
 
-const SUMMARY_HEADER = "*** SUMMARY ***";
+type SummaryHeader = typeof SUMMARY_HEADER;
+type PokerStarsHeader = typeof POKERSTARTS_HEADER;
+
+type PokerHeader = SummaryHeader | PokerStarsHeader;
 
 type PokerGame =
   | "7 Card Stud Hi/Lo"
@@ -51,81 +59,56 @@ const earningByGame: Record<PokerGame, number> = {
 const readAllCashGameEarnings = (folderPath: string) => {
   fs.readdirSync(folderPath)
     .filter((filename) => filename.endsWith(".txt"))
-    .forEach((filename) =>
-      calculateEarningsOnFile(path.join(folderPath, filename)),
-    );
+    .forEach((filename) => parseFileText(path.join(folderPath, filename)));
 };
 
-const calculateEarningsOnFile = (filePath: string) => {
+const parseFileText = (filePath: string) => {
   const content = fs.readFileSync(filePath, "utf8");
+  const linebreak = "\r\n";
 
-  /**
-   * Contains map where key is id and content is whole text content of hand
-   */
-  const lines = content.split("\r\n").filter((line) => line.length);
+  const lines = content.split(linebreak);
 
-  const handMap: Record<string, string[]> = {};
-
-  for (let i = 0; i < lines.length; i++) {
-    const line = lines[i];
-    if (line.startsWith("PokerStars Hand #")) {
-      const handNumber = line.trim();
-      const summaryLines: string[] = [];
-
-      // Find lines between "*** SUMMARY ***" and the next "PokerStars Hand #"
-      for (let j = i + 1; j < lines.length; j++) {
-        const summaryLine = lines[j].trim();
-        if (summaryLine === "*** SUMMARY ***") {
-          break;
-        }
-        summaryLines.push(summaryLine);
-      }
-
-      handMap[handNumber] = summaryLines;
-    }
-  }
-
-  console.log("handMap", handMap);
-
-  //  parseHandTextContent(pokerHandMap);
-};
-
-const parseHandTextContent = (handMap: Record<string, string[]>) => {
-  console.log("handMap", handMap);
-
-  // calculateEarningFromParsedData(parsedData);
-};
-
-const calculateEarningFromParsedData = (
-  pokerHand: Record<PokerGame, string[]>,
-) => {};
-
-const logResult = () => {};
-
-readAllCashGameEarnings(ENV.handHistoryFolderPath);
-logResult();
-
-// Helpers
-function extractWonAmountFromLine(line: string) {
-  const regex = /\((\d+)\)/;
-  const match = regex.exec(line);
-
-  if (!match) {
-    throw new Error("Error regex fail");
-  }
-
-  return parseInt(match[1], 10);
-}
-
-function findWinningLine(lines: string[]) {
-  const playerName = ENV.playerName;
-  const winTerms = ["collected", "won"] as const;
-
-  const winningLine = lines.filter(
-    (line) =>
-      (line.includes(winTerms[0]) || line.includes(winTerms[1])) &&
-      line.includes(playerName),
+  const keywordLines = lines.filter(
+    (line) => isLineHeader(line) || isLineKeywordAndPlayer(line),
   );
 
-  return winningLine[0];
+  let count = 0;
+  const handCount = keywordLines.forEach(
+    (line) => line.includes(POKERSTARTS_HEADER) && count++,
+  );
+
+  console.log('count', count)
+
+  // const handsTxt = getHandRecords(keywordLines);
+};
+
+readAllCashGameEarnings(ENV.handHistoryFolderPath);
+
+// Helper functions
+function isLineKeywordAndPlayer(line: string) {
+  const keywords: Term[] = [
+    "collected",
+    "folded",
+    "lost",
+    "mucked",
+    "won",
+    "raises",
+    "bets",
+    "calls",
+  ];
+
+  return (
+    keywords.some((word) => line.includes(word)) &&
+    line.includes(ENV.playerName)
+  );
+}
+
+function isLineHeader(line: string): boolean {
+  return ["*** SUMMARY ***", "PokerStars Hand #"].some((word) =>
+    line.includes(word),
+  );
+}
+
+function getHandRecords(keywordLines: string[]): Record<string, string[]> {
+  throw new Error("");
 }

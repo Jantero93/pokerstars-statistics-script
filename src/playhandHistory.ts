@@ -41,10 +41,11 @@ const readAllHandHistoryFiles = (folderPath: string) =>
 
 const getHandLinesFromFile = (filePath: string) => {
   const content = fs.readFileSync(filePath, "utf8");
-  const handPattern = /PokerStars Hand #\d+/g;
+  const headerText = "PokerStars Hand #";
 
-  const lines = content.split("\n");
-  const matchingLines = lines.filter((line) => handPattern.test(line));
+  const lines = content.split("\r\n");
+  const matchingLines = lines.filter((line) => line.includes(headerText));
+
   calculatePlayedHands(matchingLines);
 };
 
