@@ -19,7 +19,14 @@ const getStatisticsFromFile = (filePath: string) => {
   const lines = content.split("\n");
 
   const calcBuyIn = () => {
-    const lineBuyIn = lines[1].split(":")[1];
+    const lineBuyIn = lines
+      .find((line) => line.includes("Buy-In"))
+      ?.split(":")[1];
+
+    if (!lineBuyIn) {
+      throw new Error("Could not find buy-in for tournament");
+    }
+
     const [buyIn, rake] = lineBuyIn.split("/").map(Number);
     return buyIn + rake;
   };
@@ -34,10 +41,20 @@ const getStatisticsFromFile = (filePath: string) => {
 
     if (!parts || parts.length < 4) return 0;
 
-    return Number(parts[3].split(",").join(""));
+    const win = Number(parts[3].split(",").join(""));
+
+    return Number.isNaN(win) ? 0 : win;
   };
 
-  buyIns = buyIns + calcBuyIn();
+  const calcReEntriesSum = () => {
+    const reEntryLine = lines.find((line) => line.includes("re-entries"));
+
+    if (!reEntryLine) return 0;
+
+    return Number(reEntryLine.split(" ")[8].split(",").join(""));
+  };
+
+  buyIns = buyIns + calcBuyIn() + calcReEntriesSum();
   tournamentCount++;
   wins = wins + calcWin();
 };
@@ -49,12 +66,12 @@ const logStatistics = () => {
   logTournamentStaticsHeader();
   console.log(`Played tournaments${" ".repeat(12)}${tournamentCount}`);
   console.log(`Earned money${" ".repeat(18)}${wins.toLocaleString("fi-FI")}`);
-  console.log(`Paid buy-ins${" ".repeat(18)}${buyIns.toLocaleString("fi-Fi")}`);
+  console.log(`Paid buy-ins (and rebuyis)${" ".repeat(4)}${buyIns.toLocaleString("fi-Fi")}`);
   printbuyInWinningDiff(winBuyInsDiff);
 };
 
 function logTournamentStaticsHeader() {
-  const message = "Tournament statistics";
+  const message = "Tournament, sit & go statistics";
   console.log(`\x1b[35m${message}\x1b[0m`);
 }
 
@@ -62,7 +79,7 @@ function printbuyInWinningDiff(diff: number) {
   const diffColor =
     diff >= 0
       ? "\x1b[92m" // Green for positive numbers
-      : "\x1b[31m"; // Red for negative numbers and zero
+      : "\x1b[31m"; // Red for negative numbers
 
   console.log(
     `Diff on buy-ins and winnings${" ".repeat(

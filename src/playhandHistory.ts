@@ -84,7 +84,7 @@ const logPlayedHands = () => {
   );
 
   // Get max string length so played count can be aligned vertically
-  const maxGameNameLength = sortedGames.reduce(
+  const maxGameNameLength = sortedGames.reduce<number>(
     (max, game) => Math.max(max, game.length),
     0,
   );
@@ -137,6 +137,6 @@ function printErrorLog() {
 }
 
 function printHandStatsHeader() {
-  const message = "Playerd hands by game";
+  const message = "Played hands by game";
   console.log(`\x1b[35m${message}\x1b[0m`);
 }
