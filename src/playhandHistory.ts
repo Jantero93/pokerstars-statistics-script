@@ -1,6 +1,6 @@
-import * as fs from "fs";
-import * as path from "path";
-import ENV from "./env";
+import * as fs from 'fs';
+import * as path from 'path';
+import ENV from './env';
 
 /**
  * Array of unrecognized hands
@@ -8,62 +8,60 @@ import ENV from "./env";
 const unknownHandsList: string[] = [];
 
 type PokerGame =
-  | "7 Card Stud Hi/Lo"
-  | "7 Card Stud"
+  | '7 Card Stud Hi/Lo'
+  | '7 Card Stud'
   | "Hold'em Limit"
   | "Hold'em No Limit"
-  | "Omaha Hi/Lo Limit"
-  | "Omaha Hi/Lo Pot Limit"
-  | "Triple Draw 2-7 Lowball"
-  | "Omaha Pot Limit"
-  | "Razz";
+  | 'Omaha Hi/Lo Limit'
+  | 'Omaha Hi/Lo Pot Limit'
+  | 'Triple Draw 2-7 Lowball'
+  | 'Omaha Pot Limit'
+  | 'Razz';
 
-const playedHands: Record<PokerGame | "UNKNOWN", number> = {
-  "7 Card Stud Hi/Lo": 0,
-  "7 Card Stud": 0,
+const playedHands: Record<PokerGame | 'UNKNOWN', number> = {
+  '7 Card Stud Hi/Lo': 0,
+  '7 Card Stud': 0,
   "Hold'em Limit": 0,
   "Hold'em No Limit": 0,
-  "Omaha Hi/Lo Limit": 0,
-  "Omaha Hi/Lo Pot Limit": 0,
-  "Triple Draw 2-7 Lowball": 0,
-  "Omaha Pot Limit": 0,
+  'Omaha Hi/Lo Limit': 0,
+  'Omaha Hi/Lo Pot Limit': 0,
+  'Triple Draw 2-7 Lowball': 0,
+  'Omaha Pot Limit': 0,
   Razz: 0,
-  UNKNOWN: 0,
+  UNKNOWN: 0
 };
 
 const readAllHandHistoryFiles = (folderPath: string) =>
   fs
     .readdirSync(folderPath)
-    .filter((filename) => filename.endsWith(".txt"))
-    .forEach((filename) =>
-      getHandLinesFromFile(path.join(folderPath, filename)),
-    );
+    .filter(filename => filename.endsWith('.txt'))
+    .forEach(filename => getHandLinesFromFile(path.join(folderPath, filename)));
 
 const getHandLinesFromFile = (filePath: string) => {
-  const content = fs.readFileSync(filePath, "utf8");
-  const headerText = "PokerStars Hand #";
+  const content = fs.readFileSync(filePath, 'utf8');
+  const headerText = 'PokerStars Hand #';
 
-  const lines = content.split("\r\n");
-  const matchingLines = lines.filter((line) => line.includes(headerText));
+  const lines = content.split('\r\n');
+  const matchingLines = lines.filter(line => line.includes(headerText));
 
   calculatePlayedHands(matchingLines);
 };
 
 const calculatePlayedHands = (handLineTexts: string[]) =>
-  handLineTexts.forEach((textLine) => {
+  handLineTexts.forEach(textLine => {
     const pokerGames: PokerGame[] = [
-      "7 Card Stud Hi/Lo",
-      "7 Card Stud",
+      '7 Card Stud Hi/Lo',
+      '7 Card Stud',
       "Hold'em Limit",
       "Hold'em No Limit",
-      "Omaha Hi/Lo Limit",
-      "Omaha Hi/Lo Pot Limit",
-      "Triple Draw 2-7 Lowball",
-      "Omaha Pot Limit",
-      "Razz",
+      'Omaha Hi/Lo Limit',
+      'Omaha Hi/Lo Pot Limit',
+      'Triple Draw 2-7 Lowball',
+      'Omaha Pot Limit',
+      'Razz'
     ];
 
-    const matchedGame = pokerGames.find((game) => textLine.includes(game));
+    const matchedGame = pokerGames.find(game => textLine.includes(game));
 
     if (!matchedGame) {
       playedHands.UNKNOWN++;
@@ -79,38 +77,38 @@ const logPlayedHands = () => {
   // Sort by played hands descending
   const sortedGames = Object.keys(playedHands).sort(
     (a, b) =>
-      playedHands[b as PokerGame | "UNKNOWN"] -
-      playedHands[a as PokerGame | "UNKNOWN"],
+      playedHands[b as PokerGame | 'UNKNOWN'] -
+      playedHands[a as PokerGame | 'UNKNOWN']
   );
 
   // Get max string length so played count can be aligned vertically
   const maxGameNameLength = sortedGames.reduce<number>(
     (max, game) => Math.max(max, game.length),
-    0,
+    0
   );
 
   printHandStatsHeader();
 
-  sortedGames.forEach((game) => {
-    const gameCount = playedHands[game as PokerGame | "UNKNOWN"];
+  sortedGames.forEach(game => {
+    const gameCount = playedHands[game as PokerGame | 'UNKNOWN'];
 
     // Log only played games
     if (gameCount === 0) return;
 
-    const spaces = " ".repeat(maxGameNameLength - game.length + 2); // Add 2 extra spaces
-    console.log(`${game}${spaces}${gameCount.toLocaleString("fi-Fi")}`);
+    const spaces = ' '.repeat(maxGameNameLength - game.length + 2); // Add 2 extra spaces
+    console.log(`${game}${spaces}${gameCount.toLocaleString('fi-Fi')}`);
   });
 
   const allCount = Object.values(playedHands).reduce(
     (sum, count) => sum + count,
-    0,
+    0
   );
 
-  const logSpaces = " ".repeat(9);
+  const logSpaces = ' '.repeat(9);
   console.log(
     `\x1b[96m\nAll played hands${logSpaces}${allCount.toLocaleString(
-      "fi-Fi",
-    )}\x1b[0m`,
+      'fi-Fi'
+    )}\x1b[0m`
   );
 
   if (unknownHandsList.length || playedHands.UNKNOWN) printErrorLog();
@@ -125,18 +123,18 @@ logPlayedHands();
 
 function printErrorLog() {
   console.log(
-    "\x1b[33m", // Set text color to yellow
-    "\n***** THERE WERE UNKNOWN HANDS / GAMES *****\n",
-    "\x1b[0m", // Reset text color to default
+    '\x1b[33m', // Set text color to yellow
+    '\n***** THERE WERE UNKNOWN HANDS / GAMES *****\n',
+    '\x1b[0m' // Reset text color to default
   );
   console.log(
-    "\x1b[31m", // Set text color to red
+    '\x1b[31m', // Set text color to red
     unknownHandsList,
-    "\x1b[0m", // Reset text color to default
+    '\x1b[0m' // Reset text color to default
   );
 }
 
 function printHandStatsHeader() {
-  const message = "Played hands by game";
+  const message = 'Played hands by game';
   console.log(`\x1b[35m${message}\x1b[0m`);
 }
