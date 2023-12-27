@@ -66,7 +66,7 @@ const logStatistics = (): void => {
 
   logger('\n--- Tournament, sit & go statistics ---', 'magenta');
   logger(`Played tournaments${' '.repeat(13)}${tournamentCount}`);
-  logger(`Tournament, sit & go winnings  ${tournamentWins}`);
+  logger(`Tournament, sit & go wins      ${tournamentWins}`);
   logger(`Earned money${' '.repeat(19)}${wins}`);
   logger(`Paid buy-ins (and rebuyis)${' '.repeat(5)}${buyIns}`);
   logger(`Diff on buy-ins and winnings   ${winBuyInsDiff}`, diffTextColor);

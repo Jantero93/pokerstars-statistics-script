@@ -58,7 +58,7 @@ const logPlayedHands = (): void => {
     0
   );
 
-  logger('--- Played hands by gane ---', 'magenta');
+  logger('--- Played hands by game ---', 'magenta');
 
   sortedGames.forEach((game) => {
     const gameCount = playedHands[game as PokerGame | 'UNKNOWN'];
