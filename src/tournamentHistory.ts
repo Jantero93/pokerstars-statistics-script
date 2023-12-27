@@ -6,12 +6,12 @@ import { createTournamentStatsObject } from './types';
 const tournamentStats = createTournamentStatsObject();
 
 const readAllTournamentStatistics = (folderPath: string): void =>
-  FileHandler.fileReader(folderPath).forEach((filepath) =>
+  FileHandler.getFilePathsFromFolder(folderPath).forEach((filepath) =>
     getStatisticsFromFile(filepath)
   );
 
 const getStatisticsFromFile = (filePath: string): void => {
-  const lines = FileHandler.getContentFromFile(filePath);
+  const lines = FileHandler.getContentLinesFromFile(filePath);
 
   // Helper
   const calcWin = (): number => {
@@ -72,6 +72,9 @@ const logStatistics = (): void => {
   logger(`Diff on buy-ins and winnings   ${winBuyInsDiff}`, diffTextColor);
 };
 
-// Execute functions
-readAllTournamentStatistics(ENV.tournamentStatisticsFolderPath);
-logStatistics();
+const executeTournamentHistory = (): void => {
+  readAllTournamentStatistics(ENV.tournamentStatisticsFolderPath);
+  logStatistics();
+};
+
+export default executeTournamentHistory;

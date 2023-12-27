@@ -1,28 +1,38 @@
 {
   "name": "pokerstatistics",
+  "description": "Poker statics calculator",
   "version": "1.0.0",
-  "description": "",
+  "author": "Jani Sillanpää",
+  "license": "MIT",
+  "os": [
+    "win32"
+  ],
+  "keywords": [
+    "PokerStars",
+    "statistics",
+    "history"
+  ],
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "tsc",
-    "debug": "tsc && node dist/cashgamestatistics.js"
+    "compile": "rimraf dist && tsc",
+    "copy:env": "node copy-env.js",
+    "build": "rimraf dist && tsc && node copy-env.js"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "dependencies": {
+    "dotenv": "^16.3.1",
+    "node": "^21.2.0"
+  },
   "devDependencies": {
+    "@types/node": "^20.10.5",
     "@typescript-eslint/eslint-plugin": "^6.15.0",
     "@typescript-eslint/parser": "^6.15.0",
     "eslint": "^8.56.0",
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-prettier": "^5.1.0",
+    "ncp": "^2.0.0",
     "prettier": "^3.1.1",
+    "rimraf": "^5.0.5",
     "typescript": "^5.3.3"
-  },
-  "dependencies": {
-    "@types/node": "^20.10.5",
-    "dotenv": "^16.3.1",
-    "node": "^21.2.0"
   }
 }

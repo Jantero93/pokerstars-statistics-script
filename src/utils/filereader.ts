@@ -5,7 +5,7 @@ import * as path from 'path';
  * @param dirPath Path to directory where history files are
  * @returns Full paths of files
  */
-const fileReader = (dirPath: string): string[] =>
+const getFilePathsFromFolder = (dirPath: string): string[] =>
   fs
     .readdirSync(dirPath)
     .filter((filename) => filename.endsWith('.txt'))
@@ -15,12 +15,12 @@ const fileReader = (dirPath: string): string[] =>
  * @param filePath Whole File path which to read
  * @returns Array of lines (linebreak hard coded \r\n)
  */
-const getContentFromFile = (filePath: string): string[] => {
+const getContentLinesFromFile = (filePath: string): string[] => {
   const content = fs.readFileSync(filePath, 'utf8');
   return content.split('\r\n');
 };
 
 export default {
-  fileReader: fileReader,
-  getContentFromFile: getContentFromFile
+  getFilePathsFromFolder,
+  getContentLinesFromFile
 };

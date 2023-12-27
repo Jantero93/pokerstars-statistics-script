@@ -16,12 +16,12 @@ const playedHands = createPlayedHandsObject();
 const pokerGames = createKnownGamesList();
 
 const readAllHandHistoryFiles = (folderPath: string): void =>
-  FileHandler.fileReader(folderPath).forEach((filepath) =>
+  FileHandler.getFilePathsFromFolder(folderPath).forEach((filepath) =>
     getHandLinesFromFile(filepath)
   );
 
 const getHandLinesFromFile = (filePath: string): void => {
-  const lines = FileHandler.getContentFromFile(filePath);
+  const lines = FileHandler.getContentLinesFromFile(filePath);
   const headerText = 'PokerStars Hand #';
   const matchingLines = lines.filter((line) => line.includes(headerText));
 
@@ -75,9 +75,7 @@ const logPlayedHands = (): void => {
     (sum, count) => sum + count,
     0
   );
-
-  const logSpaces = ' '.repeat(9);
-  logger(`\nAll played hands${logSpaces}${allPlayedHandsCount}`, 'cyan');
+  logger(`\nAll played hands${' '.repeat(9)}${allPlayedHandsCount}`, 'cyan');
 
   if (unknownHandsList.length || playedHands.UNKNOWN) {
     logger('\n***** THERE WERE UNKNOWN HANDS / GAMES *****', 'yellow');
@@ -85,6 +83,9 @@ const logPlayedHands = (): void => {
   }
 };
 
-// Execute functions
-readAllHandHistoryFiles(ENV.handHistoryFolderPath);
-logPlayedHands();
+const executePlayHandHistory = () => {
+  readAllHandHistoryFiles(ENV.handHistoryFolderPath);
+  logPlayedHands();
+};
+
+export default executePlayHandHistory;

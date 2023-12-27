@@ -1,46 +1,21 @@
 import * as dotenv from 'dotenv';
 import path from 'path';
 
-const scriptDir = __dirname;
-const envPath = path.join(scriptDir, '..', '.env');
-dotenv.config({ path: envPath });
+const dotEnvLocation = path.join(__dirname, '..', '.env');
+dotenv.config({ path: dotEnvLocation });
 
-const getHandHistoryFolderPath = () => {
-  const path = process.env.HAND_HISTORY_FOLDER_PATH;
+const getEnv = (key: string): string => {
+  const env = process.env[key];
 
-  if (!path) {
-    throw new Error('No HAND_HISTORY_FOLDER_PATH provided in .env file');
-  }
+  if (!env) throw new Error(`No ${env} provided in .env file`);
 
-  return path;
-};
-
-const getTournamentStatisticFolderPath = () => {
-  const path = process.env.TOURNAMENT_STATISTICS_FOLDER_PATH;
-
-  if (!path) {
-    throw new Error(
-      'No TOURNAMENT_STATISTICS_FOLDER_PATH provided in .env file'
-    );
-  }
-
-  return path;
-};
-
-const getPlayerName = () => {
-  const playerName = process.env.PLAYER_NAME;
-
-  if (!playerName) {
-    throw new Error('No PLAYER_NAME provided in .env file');
-  }
-
-  return playerName;
+  return env;
 };
 
 const ENV = {
-  handHistoryFolderPath: getHandHistoryFolderPath(),
-  tournamentStatisticsFolderPath: getTournamentStatisticFolderPath(),
-  playerName: getPlayerName()
+  handHistoryFolderPath: getEnv('HAND_HISTORY_FOLDER_PATH'),
+  tournamentStatisticsFolderPath: getEnv('TOURNAMENT_STATISTICS_FOLDER_PATH'),
+  playerName: getEnv('PLAYER_NAME')
 };
 
 export default ENV;

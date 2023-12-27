@@ -1,5 +1,6 @@
 test.txt
 output.txt
+executable
 .env
 node_modules/
 .node_modules/
