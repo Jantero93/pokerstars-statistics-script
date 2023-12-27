@@ -1,26 +1,36 @@
-import * as fs from 'fs';
-import * as path from 'path';
 import ENV from './env';
+import logger from './utils/logger';
+import FileHandler from './utils/filereader';
+import { createTournamentStatsObject } from './types';
 
-let buyIns = 0;
-let wins = 0;
-let tournamentCount = 0;
+const tournamentStats = createTournamentStatsObject();
 
-const readAllTournamentStatistics = (folderPath: string) =>
-  fs
-    .readdirSync(folderPath)
-    .filter(filtename => filtename.endsWith('.txt'))
-    .forEach(filename =>
-      getStatisticsFromFile(path.join(folderPath, filename))
-    );
+const readAllTournamentStatistics = (folderPath: string): void =>
+  FileHandler.fileReader(folderPath).forEach((filepath) =>
+    getStatisticsFromFile(filepath)
+  );
 
-const getStatisticsFromFile = (filePath: string) => {
-  const content = fs.readFileSync(filePath, 'utf8');
-  const lines = content.split('\n');
+const getStatisticsFromFile = (filePath: string): void => {
+  const lines = FileHandler.getContentFromFile(filePath);
 
-  const calcBuyIn = () => {
+  // Helper
+  const calcWin = (): number => {
+    const playerLine = lines
+      .map((line) => line.trim())
+      .find((line) => line.includes(ENV.playerName));
+
+    const parts = playerLine?.split(' ');
+    if (!parts || parts.length < 4) return 0;
+
+    const win = Number(parts[3].split(',').join(''));
+
+    return Number.isNaN(win) ? 0 : win;
+  };
+
+  // Helper
+  const calcBuyIn = (): number => {
     const lineBuyIn = lines
-      .find(line => line.includes('Buy-In'))
+      .find((line) => line.includes('Buy-In'))
       ?.split(':')[1];
 
     if (!lineBuyIn) {
@@ -31,64 +41,37 @@ const getStatisticsFromFile = (filePath: string) => {
     return buyIn + rake;
   };
 
-  const calcWin = () => {
-    const trimmedLines = lines.map(line => line.trim());
-    const playerLine = trimmedLines.find(line => line.includes(ENV.playerName));
-
-    const parts = playerLine?.split(' ');
-
-    if (!parts || parts.length < 4) return 0;
-
-    const win = Number(parts[3].split(',').join(''));
-
-    return Number.isNaN(win) ? 0 : win;
-  };
-
-  const calcReEntriesSum = () => {
-    const reEntryLine = lines.find(line => line.includes('re-entries'));
-
+  // Helper
+  const calcReEntriesSum = (): number => {
+    const reEntryLine = lines.find((line) => line.includes('re-entries'));
     if (!reEntryLine) return 0;
 
     return Number(reEntryLine.split(' ')[8].split(',').join(''));
   };
 
-  buyIns = buyIns + calcBuyIn() + calcReEntriesSum();
-  tournamentCount++;
-  wins = wins + calcWin();
+  // Helper
+  const wonTournament = (): boolean =>
+    lines.some((line) => line.includes('You finished in 1st place'));
+
+  tournamentStats.wins += calcWin();
+  tournamentStats.buyIns += calcBuyIn() + calcReEntriesSum();
+  tournamentStats.tournamentWins += wonTournament() ? 1 : 0;
+  tournamentStats.tournamentCount++;
 };
 
-const logStatistics = () => {
+const logStatistics = (): void => {
+  const { wins, buyIns, tournamentCount, tournamentWins } = tournamentStats;
   const winBuyInsDiff = wins - buyIns;
+  const diffTextColor = winBuyInsDiff <= 0 ? 'red' : 'green';
 
-  console.log('\n');
-  logTournamentStaticsHeader();
-  console.log(`Played tournaments${' '.repeat(12)}${tournamentCount}`);
-  console.log(`Earned money${' '.repeat(18)}${wins.toLocaleString('fi-FI')}`);
-  console.log(
-    `Paid buy-ins (and rebuyis)${' '.repeat(4)}${buyIns.toLocaleString(
-      'fi-Fi'
-    )}`
-  );
-  printbuyInWinningDiff(winBuyInsDiff);
+  logger('\n--- Tournament, sit & go statistics ---', 'magenta');
+  logger(`Played tournaments${' '.repeat(13)}${tournamentCount}`);
+  logger(`Tournament, sit & go winnings  ${tournamentWins}`);
+  logger(`Earned money${' '.repeat(19)}${wins}`);
+  logger(`Paid buy-ins (and rebuyis)${' '.repeat(5)}${buyIns}`);
+  logger(`Diff on buy-ins and winnings   ${winBuyInsDiff}`, diffTextColor);
 };
 
-function logTournamentStaticsHeader() {
-  const message = 'Tournament, sit & go statistics';
-  console.log(`\x1b[35m${message}\x1b[0m`);
-}
-
-function printbuyInWinningDiff(diff: number) {
-  const diffColor =
-    diff >= 0
-      ? '\x1b[92m' // Green for positive numbers
-      : '\x1b[31m'; // Red for negative numbers
-
-  console.log(
-    `Diff on buy-ins and winnings${' '.repeat(
-      2
-    )}${diffColor}${diff.toLocaleString('fi-FI')}\x1b[0m`
-  );
-}
-
+// Execute functions
 readAllTournamentStatistics(ENV.tournamentStatisticsFolderPath);
 logStatistics();

@@ -1,67 +1,36 @@
-import * as fs from 'fs';
-import * as path from 'path';
 import ENV from './env';
+import logger from './utils/logger';
+import FileHandler from './utils/filereader';
+import {
+  PokerGame,
+  createPlayedHandsObject,
+  createKnownGamesList
+} from './types';
 
 /**
  * Array of unrecognized hands
  */
 const unknownHandsList: string[] = [];
 
-type PokerGame =
-  | '7 Card Stud Hi/Lo'
-  | '7 Card Stud'
-  | "Hold'em Limit"
-  | "Hold'em No Limit"
-  | 'Omaha Hi/Lo Limit'
-  | 'Omaha Hi/Lo Pot Limit'
-  | 'Triple Draw 2-7 Lowball'
-  | 'Omaha Pot Limit'
-  | 'Razz';
+const playedHands = createPlayedHandsObject();
+const pokerGames = createKnownGamesList();
 
-const playedHands: Record<PokerGame | 'UNKNOWN', number> = {
-  '7 Card Stud Hi/Lo': 0,
-  '7 Card Stud': 0,
-  "Hold'em Limit": 0,
-  "Hold'em No Limit": 0,
-  'Omaha Hi/Lo Limit': 0,
-  'Omaha Hi/Lo Pot Limit': 0,
-  'Triple Draw 2-7 Lowball': 0,
-  'Omaha Pot Limit': 0,
-  Razz: 0,
-  UNKNOWN: 0
-};
+const readAllHandHistoryFiles = (folderPath: string): void =>
+  FileHandler.fileReader(folderPath).forEach((filepath) =>
+    getHandLinesFromFile(filepath)
+  );
 
-const readAllHandHistoryFiles = (folderPath: string) =>
-  fs
-    .readdirSync(folderPath)
-    .filter(filename => filename.endsWith('.txt'))
-    .forEach(filename => getHandLinesFromFile(path.join(folderPath, filename)));
-
-const getHandLinesFromFile = (filePath: string) => {
-  const content = fs.readFileSync(filePath, 'utf8');
+const getHandLinesFromFile = (filePath: string): void => {
+  const lines = FileHandler.getContentFromFile(filePath);
   const headerText = 'PokerStars Hand #';
-
-  const lines = content.split('\r\n');
-  const matchingLines = lines.filter(line => line.includes(headerText));
+  const matchingLines = lines.filter((line) => line.includes(headerText));
 
   calculatePlayedHands(matchingLines);
 };
 
-const calculatePlayedHands = (handLineTexts: string[]) =>
-  handLineTexts.forEach(textLine => {
-    const pokerGames: PokerGame[] = [
-      '7 Card Stud Hi/Lo',
-      '7 Card Stud',
-      "Hold'em Limit",
-      "Hold'em No Limit",
-      'Omaha Hi/Lo Limit',
-      'Omaha Hi/Lo Pot Limit',
-      'Triple Draw 2-7 Lowball',
-      'Omaha Pot Limit',
-      'Razz'
-    ];
-
-    const matchedGame = pokerGames.find(game => textLine.includes(game));
+const calculatePlayedHands = (handLineTexts: string[]): void =>
+  handLineTexts.forEach((textLine) => {
+    const matchedGame = pokerGames.find((game) => textLine.includes(game));
 
     if (!matchedGame) {
       playedHands.UNKNOWN++;
@@ -73,13 +42,15 @@ const calculatePlayedHands = (handLineTexts: string[]) =>
     playedHands[matchedGame]++;
   });
 
-const logPlayedHands = () => {
-  // Sort by played hands descending
-  const sortedGames = Object.keys(playedHands).sort(
+const sortGameDataDesc = (): string[] =>
+  Object.keys(playedHands).sort(
     (a, b) =>
       playedHands[b as PokerGame | 'UNKNOWN'] -
       playedHands[a as PokerGame | 'UNKNOWN']
   );
+
+const logPlayedHands = (): void => {
+  const sortedGames = sortGameDataDesc();
 
   // Get max string length so played count can be aligned vertically
   const maxGameNameLength = sortedGames.reduce<number>(
@@ -87,54 +58,33 @@ const logPlayedHands = () => {
     0
   );
 
-  printHandStatsHeader();
+  logger('--- Played hands by gane ---', 'magenta');
 
-  sortedGames.forEach(game => {
+  sortedGames.forEach((game) => {
     const gameCount = playedHands[game as PokerGame | 'UNKNOWN'];
 
     // Log only played games
     if (gameCount === 0) return;
 
     const spaces = ' '.repeat(maxGameNameLength - game.length + 2); // Add 2 extra spaces
-    console.log(`${game}${spaces}${gameCount.toLocaleString('fi-Fi')}`);
+    logger(`${game}${spaces}${gameCount}`);
   });
 
-  const allCount = Object.values(playedHands).reduce(
+  /** Calculate all played hands */
+  const allPlayedHandsCount = Object.values(playedHands).reduce<number>(
     (sum, count) => sum + count,
     0
   );
 
   const logSpaces = ' '.repeat(9);
-  console.log(
-    `\x1b[96m\nAll played hands${logSpaces}${allCount.toLocaleString(
-      'fi-Fi'
-    )}\x1b[0m`
-  );
+  logger(`\nAll played hands${logSpaces}${allPlayedHandsCount}`, 'cyan');
 
-  if (unknownHandsList.length || playedHands.UNKNOWN) printErrorLog();
+  if (unknownHandsList.length || playedHands.UNKNOWN) {
+    logger('\n***** THERE WERE UNKNOWN HANDS / GAMES *****', 'yellow');
+    logger(unknownHandsList.join(', '), 'red');
+  }
 };
 
-/**
- * Set absolute path to PokerStar folder where hand history is stored
- */
+// Execute functions
 readAllHandHistoryFiles(ENV.handHistoryFolderPath);
-
 logPlayedHands();
-
-function printErrorLog() {
-  console.log(
-    '\x1b[33m', // Set text color to yellow
-    '\n***** THERE WERE UNKNOWN HANDS / GAMES *****\n',
-    '\x1b[0m' // Reset text color to default
-  );
-  console.log(
-    '\x1b[31m', // Set text color to red
-    unknownHandsList,
-    '\x1b[0m' // Reset text color to default
-  );
-}
-
-function printHandStatsHeader() {
-  const message = 'Played hands by game';
-  console.log(`\x1b[35m${message}\x1b[0m`);
-}
