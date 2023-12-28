@@ -15,15 +15,12 @@ import {
 const unknownHandsList: string[] = [];
 
 const readAllHandHistoryFiles = (folderPath: string): PlayedHands => {
-  const filesContentLines = FileHandler.getFilePathsFromFolder(folderPath).map(
-    (filepath) => getHandLinesFromFile(filepath)
-  );
+  const filePathList = FileHandler.getFilePathsFromFolder(folderPath);
+  const handLinesEachFile = filePathList.map(getHandLinesFromFile);
+  const playedHandsRecordEachFileList =
+    handLinesEachFile.map(calculatePlayedHands);
 
-  const statsFromFiles = filesContentLines.map((fileLines) =>
-    calculatePlayedHands(fileLines)
-  );
-
-  return finalizeRawData(statsFromFiles);
+  return combineFileRecordsToSummary(playedHandsRecordEachFileList);
 };
 
 const getHandLinesFromFile = (filePath: string): string[] => {
@@ -52,7 +49,7 @@ const calculatePlayedHands = (handLineTexts: string[]): PlayedHands => {
   return playdHandsStats;
 };
 
-const finalizeRawData = (records: PlayedHands[]): PlayedHands => {
+const combineFileRecordsToSummary = (records: PlayedHands[]): PlayedHands => {
   // Sum all records as one
   const sumRecords = records.reduce((result, record) => {
     Object.keys(record).forEach((key) => {
@@ -63,15 +60,15 @@ const finalizeRawData = (records: PlayedHands[]): PlayedHands => {
     return result;
   }, createPlayedHandsObject());
 
-  const sortGamesDesc = Object.fromEntries(
+  const sortGamesDescByCount = Object.fromEntries(
     Object.entries(sumRecords).sort(([, a], [, b]) => b - a)
   ) as PlayedHands;
 
-  return sortGamesDesc;
+  return sortGamesDescByCount;
 };
 
 const calcAllPlayedHands = (stats: PlayedHands): number =>
-  Object.values(stats).reduce<number>((sum, count) => sum + count, 0);
+  Object.values(stats).reduce((sum, count) => sum + count, 0);
 
 const logPlayedHands = (stats: PlayedHands) => {
   logger('--- Played hands by game ---', 'magenta');

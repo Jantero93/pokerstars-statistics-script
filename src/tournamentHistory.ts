@@ -66,9 +66,8 @@ const calculateTotalStats = (statsList: TournamentStats[]): TournamentStats =>
   );
 
 const getTournamentStats = (folderPath: string): TournamentStats => {
-  const tournamentStatsList = FileHandler.getFilePathsFromFolder(
-    folderPath
-  ).map((filepath) => calcStatsFromFile(filepath));
+  const tournamentStatsList =
+    FileHandler.getFilePathsFromFolder(folderPath).map(calcStatsFromFile);
 
   const totalStats = calculateTotalStats(tournamentStatsList);
 

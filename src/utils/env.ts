@@ -2,6 +2,7 @@ import * as dotenv from 'dotenv';
 import path from 'path';
 import tryGetEnvVariablesAutomatically from './envGetter';
 import logger from './logger';
+import process from 'process';
 
 export type EnvConfig = {
   HAND_HISTORY_FOLDER_PATH: string;
@@ -12,23 +13,24 @@ export type EnvConfig = {
 const dotEnvLocation = path.join(__dirname, '../..', '.env');
 dotenv.config({ path: dotEnvLocation });
 
-const getEnv = (key: string): string => process.env[key] ?? '';
+const getEnvFromFile = (): EnvConfig | null => {
+  const { env } = process;
 
-const getEnvFromFile = (): EnvConfig => ({
-  HAND_HISTORY_FOLDER_PATH: getEnv('HAND_HISTORY_FOLDER_PATH'),
-  TOURNAMENT_STATISTICS_FOLDER_PATH: getEnv(
-    'TOURNAMENT_STATISTICS_FOLDER_PATH'
-  ),
-  PLAYER_NAME: getEnv('PLAYER_NAME')
-});
+  const envs = {
+    HAND_HISTORY_FOLDER_PATH: env['HAND_HISTORY_FOLDER_PATH'],
+    TOURNAMENT_STATISTICS_FOLDER_PATH: env['TOURNAMENT_STATISTICS_FOLDER_PATH'],
+    PLAYER_NAME: env['PLAYER_NAME']
+  };
+
+  return Object.values(envs).every((env) => typeof env === 'string')
+    ? (envs as EnvConfig)
+    : null;
+};
 
 const getConfig = (): EnvConfig => {
   const envsFromFile = getEnvFromFile();
-  const isValidFileEnvs = Object.values(envsFromFile).every(
-    (env) => env !== ''
-  );
 
-  if (isValidFileEnvs) return envsFromFile;
+  if (envsFromFile) return envsFromFile;
 
   const envsGetAutomatically = tryGetEnvVariablesAutomatically();
 
