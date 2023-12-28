@@ -27,13 +27,18 @@ export const createKnownGamesList = (): PokerGame[] => [
   'Razz'
 ];
 
+export const findLongestGameName = (): string =>
+  createKnownGamesList().reduce(
+    (longest, current) => (current.length > longest.length ? current : longest),
+    ''
+  );
+
+export type PlayedHands = Record<PokerGame | 'UNKNOWN', number>;
+
 /**
  * @returns Initialize record of game and played hands
  */
-export const createPlayedHandsObject = (): Record<
-  PokerGame | 'UNKNOWN',
-  number
-> => ({
+export const createPlayedHandsObject = (): PlayedHands => ({
   '7 Card Stud Hi/Lo': 0,
   '7 Card Stud': 0,
   "Hold'em Limit": 0,
@@ -49,7 +54,7 @@ export const createPlayedHandsObject = (): Record<
 /***
  * General statistics type for tournament and sit & go's
  */
-type TournamentStats = {
+export type TournamentStats = {
   buyIns: number;
   wins: number;
   tournamentCount: number;
