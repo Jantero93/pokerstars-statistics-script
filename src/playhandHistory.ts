@@ -14,8 +14,6 @@ import {
  */
 const unknownHandsList: string[] = [];
 
-// Define the GameStats type
-
 const readAllHandHistoryFiles = (folderPath: string): PlayedHands => {
   const filesContentLines = FileHandler.getFilePathsFromFolder(folderPath).map(
     (filepath) => getHandLinesFromFile(filepath)
@@ -55,6 +53,7 @@ const calculatePlayedHands = (handLineTexts: string[]): PlayedHands => {
 };
 
 const finalizeRawData = (records: PlayedHands[]): PlayedHands => {
+  // Sum all records as one
   const sumRecords = records.reduce((result, record) => {
     Object.keys(record).forEach((key) => {
       result[key as PokerGame | 'UNKNOWN'] =
@@ -62,7 +61,7 @@ const finalizeRawData = (records: PlayedHands[]): PlayedHands => {
         record[key as PokerGame | 'UNKNOWN'];
     });
     return result;
-  }, {} as PlayedHands);
+  }, createPlayedHandsObject());
 
   const sortGamesDesc = Object.fromEntries(
     Object.entries(sumRecords).sort(([, a], [, b]) => b - a)
@@ -71,29 +70,31 @@ const finalizeRawData = (records: PlayedHands[]): PlayedHands => {
   return sortGamesDesc;
 };
 
+const calcAllPlayedHands = (stats: PlayedHands): number =>
+  Object.values(stats).reduce<number>((sum, count) => sum + count, 0);
+
 const logPlayedHands = (stats: PlayedHands) => {
   logger('--- Played hands by game ---', 'magenta');
 
-  Object.entries(stats).forEach(([game, gameCount]) => {
-    // Log only played games
-    if (gameCount === 0) return;
-    // Align on same level vertically
-    const spaces = ' '.repeat(findLongestGameName().length - game.length + 2); // Add 2 extra spaces
-    logger(`${game}${spaces}${gameCount}`);
-  });
+  // Create logging strings
+  const logStrings = Object.entries(stats)
+    .filter(([_game, gameCount]) => gameCount !== 0)
+    .map(([game, gameCount]) => {
+      const spaces = ' '.repeat(findLongestGameName().length - game.length + 2);
+      return `${game}${spaces}${gameCount}`;
+    });
+
+  logStrings.forEach((logString) => logger(logString));
 
   /** Calculate and format all played hands */
-  const allPlayedHandsCount = Object.values(stats).reduce<number>(
-    (sum, count) => sum + count,
-    0
-  );
-
+  const allPlayedHandsCount = calcAllPlayedHands(stats);
   const allPlayedHeader = 'All played hands';
   const headerSpaces = ' '.repeat(
     findLongestGameName().length - allPlayedHeader.length + 2
   );
 
-  logger(`\n${allPlayedHeader}${headerSpaces}${allPlayedHandsCount}`, 'cyan');
+  const allPlayedString = `\n${allPlayedHeader}${headerSpaces}${allPlayedHandsCount}`;
+  logger(allPlayedString, 'cyan');
 
   if (unknownHandsList.length || stats.UNKNOWN) {
     logger('\n***** THERE WERE UNKNOWN HANDS / GAMES *****', 'yellow');

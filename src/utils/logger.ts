@@ -1,4 +1,4 @@
-type ConsoleColor =
+export type ConsoleColor =
   | 'reset'
   | 'bright'
   | 'dim'

@@ -1,16 +1,9 @@
 import ENV from './utils/env';
-import logger from './utils/logger';
+import logger, { ConsoleColor } from './utils/logger';
 import FileHandler from './utils/filereader';
-import { createTournamentStatsObject } from './types';
+import { TournamentStats, createTournamentStatsObject } from './types';
 
-const tournamentStats = createTournamentStatsObject();
-
-const readAllTournamentStatistics = (folderPath: string): void =>
-  FileHandler.getFilePathsFromFolder(folderPath).forEach((filepath) =>
-    getStatisticsFromFile(filepath)
-  );
-
-const getStatisticsFromFile = (filePath: string): void => {
+const calcStatsFromFile = (filePath: string): TournamentStats => {
   const lines = FileHandler.getContentLinesFromFile(filePath);
 
   // Helper
@@ -53,28 +46,58 @@ const getStatisticsFromFile = (filePath: string): void => {
   const wonTournament = (): boolean =>
     lines.some((line) => line.includes('You finished in 1st place'));
 
-  tournamentStats.wins += calcWin();
-  tournamentStats.buyIns += calcBuyIn() + calcReEntriesSum();
-  tournamentStats.tournamentWins += wonTournament() ? 1 : 0;
-  tournamentStats.tournamentCount++;
+  return {
+    wins: calcWin(),
+    buyIns: calcBuyIn() + calcReEntriesSum(),
+    tournamentWins: wonTournament() ? 1 : 0,
+    tournamentCount: 1
+  };
 };
 
-const logStatistics = (): void => {
-  const { wins, buyIns, tournamentCount, tournamentWins } = tournamentStats;
+const calculateTotalStats = (statsList: TournamentStats[]): TournamentStats =>
+  statsList.reduce(
+    (acc, current) => ({
+      wins: acc.wins + current.wins,
+      buyIns: acc.buyIns + current.buyIns,
+      tournamentWins: acc.tournamentWins + current.tournamentWins,
+      tournamentCount: acc.tournamentCount + current.tournamentCount
+    }),
+    createTournamentStatsObject()
+  );
+
+const getTournamentStats = (folderPath: string): TournamentStats => {
+  const tournamentStatsList = FileHandler.getFilePathsFromFolder(
+    folderPath
+  ).map((filepath) => calcStatsFromFile(filepath));
+
+  const totalStats = calculateTotalStats(tournamentStatsList);
+
+  return totalStats;
+};
+
+const logStatistics = (stats: TournamentStats) => {
+  const { wins, buyIns, tournamentCount, tournamentWins } = stats;
   const winBuyInsDiff = wins - buyIns;
   const diffTextColor = winBuyInsDiff <= 0 ? 'red' : 'green';
 
+  const labelSpacing = (label: string) =>
+    ' '.repeat(Math.max(0, 30 - label.length));
+
+  const spacingLog = (label: string, value: any, color?: ConsoleColor) => {
+    logger(`${label}${labelSpacing(label)}${value}`, color);
+  };
+
   logger('\n--- Tournament, sit & go statistics ---', 'magenta');
-  logger(`Played tournaments${' '.repeat(13)}${tournamentCount}`);
-  logger(`Tournament, sit & go wins      ${tournamentWins}`);
-  logger(`Earned money${' '.repeat(19)}${wins}`);
-  logger(`Paid buy-ins (and rebuyis)${' '.repeat(5)}${buyIns}`);
-  logger(`Diff on buy-ins and winnings   ${winBuyInsDiff}`, diffTextColor);
+  spacingLog('Played tournaments', tournamentCount);
+  spacingLog('Tournament, sit & go wins', tournamentWins);
+  spacingLog('Earned money', wins);
+  spacingLog('Paid buy-ins (and rebuys)', buyIns);
+  spacingLog('Diff on buy-ins and winnings', winBuyInsDiff, diffTextColor);
 };
 
-const executeTournamentHistory = (): void => {
-  readAllTournamentStatistics(ENV.TOURNAMENT_STATISTICS_FOLDER_PATH);
-  logStatistics();
+const executeTournamentHistory = () => {
+  const stats = getTournamentStats(ENV.TOURNAMENT_STATISTICS_FOLDER_PATH);
+  logStatistics(stats);
 };
 
 export default executeTournamentHistory;
