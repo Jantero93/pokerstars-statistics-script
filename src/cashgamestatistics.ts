@@ -1,6 +1,6 @@
 import * as fs from 'fs';
 import * as path from 'path';
-import ENV from './env';
+import ENV from './utils/env';
 
 const SUMMARY_HEADER = '*** SUMMARY ***';
 const POKERSTARTS_HEADER = 'PokerStars Hand #';
@@ -129,7 +129,7 @@ const calculateEarningsFromParsedText = (records: Record<string, string[]>) => {
     const matchedGame = pokerGames.find((game) => key.includes(game));
 
     if (!matchedGame) {
- /*      console.log('unknown', value); */
+      /*      console.log('unknown', value); */
       _wonGames.UNKNOWN++;
       return;
     }
@@ -140,7 +140,7 @@ const calculateEarningsFromParsedText = (records: Record<string, string[]>) => {
       if (!collectedLines.length) return null;
 
       return collectedLines
-        .filter((line) => line.includes(`${ENV.playerName} collected`))
+        .filter((line) => line.includes(`${ENV.PLAYER_NAME} collected`))
         .map((line) => Number(line.split(' ')[2]))
         .reduce((acc, curr) => acc + curr, 0);
     };
@@ -155,7 +155,7 @@ const calculateEarningsFromParsedText = (records: Record<string, string[]>) => {
   logData();
 };
 
-readAllCashGameEarnings(ENV.handHistoryFolderPath);
+readAllCashGameEarnings(ENV.HAND_HISTORY_FOLDER_PATH);
 
 function logData() {
   /*   console.log('_wonGames', _wonGames);
@@ -177,7 +177,7 @@ function isLineKeywordAndPlayer(line: string) {
 
   return (
     keywords.some((word) => line.includes(word)) &&
-    line.includes(ENV.playerName)
+    line.includes(ENV.PLAYER_NAME)
   );
 }
 

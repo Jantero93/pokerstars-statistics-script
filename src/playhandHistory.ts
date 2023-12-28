@@ -1,4 +1,4 @@
-import ENV from './env';
+import ENV from './utils/env';
 import logger from './utils/logger';
 import FileHandler from './utils/filereader';
 import {
@@ -84,7 +84,7 @@ const logPlayedHands = (): void => {
 };
 
 const executePlayHandHistory = () => {
-  readAllHandHistoryFiles(ENV.handHistoryFolderPath);
+  readAllHandHistoryFiles(ENV.HAND_HISTORY_FOLDER_PATH);
   logPlayedHands();
 };
 

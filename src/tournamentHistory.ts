@@ -1,4 +1,4 @@
-import ENV from './env';
+import ENV from './utils/env';
 import logger from './utils/logger';
 import FileHandler from './utils/filereader';
 import { createTournamentStatsObject } from './types';
@@ -17,7 +17,7 @@ const getStatisticsFromFile = (filePath: string): void => {
   const calcWin = (): number => {
     const playerLine = lines
       .map((line) => line.trim())
-      .find((line) => line.includes(ENV.playerName));
+      .find((line) => line.includes(ENV.PLAYER_NAME));
 
     const parts = playerLine?.split(' ');
     if (!parts || parts.length < 4) return 0;
@@ -73,7 +73,7 @@ const logStatistics = (): void => {
 };
 
 const executeTournamentHistory = (): void => {
-  readAllTournamentStatistics(ENV.tournamentStatisticsFolderPath);
+  readAllTournamentStatistics(ENV.TOURNAMENT_STATISTICS_FOLDER_PATH);
   logStatistics();
 };
 
