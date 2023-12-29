@@ -1,61 +1,34 @@
-import ENV from './utils/env';
+import ENV from './utils/env/env';
 import logger, { ConsoleColor } from './utils/logger';
 import FileHandler from './utils/filereader';
 import { TournamentStats, createTournamentStatsObject } from './types';
 
+const executeTournamentHistory = () => {
+  const stats = getTournamentStats(ENV.TOURNAMENT_STATISTICS_FOLDER_PATH);
+  logStatistics(stats);
+};
+
+const getTournamentStats = (folderPath: string): TournamentStats => {
+  const tournamentFilePaths = FileHandler.getFilePathsFromFolder(folderPath);
+  const tournamentRawDataFileList = tournamentFilePaths.map(calcStatsFromFile);
+  const totalStats = calculateTotalStats(tournamentRawDataFileList);
+
+  return totalStats;
+};
+
 const calcStatsFromFile = (filePath: string): TournamentStats => {
   const lines = FileHandler.getContentLinesFromFile(filePath);
 
-  // Helper
-  const calcWin = (): number => {
-    const playerLine = lines
-      .map((line) => line.trim())
-      .find((line) => line.includes(ENV.PLAYER_NAME));
-
-    const parts = playerLine?.split(' ');
-    if (!parts || parts.length < 4) return 0;
-
-    const win = Number(parts[3].split(',').join(''));
-
-    return Number.isNaN(win) ? 0 : win;
-  };
-
-  // Helper
-  const calcBuyIn = (): number => {
-    const lineBuyIn = lines
-      .find((line) => line.includes('Buy-In'))
-      ?.split(':')[1];
-
-    if (!lineBuyIn) {
-      throw new Error('Could not find buy-in for tournament');
-    }
-
-    const [buyIn, rake] = lineBuyIn.split('/').map(Number);
-    return buyIn + rake;
-  };
-
-  // Helper
-  const calcReEntriesSum = (): number => {
-    const reEntryLine = lines.find((line) => line.includes('re-entries'));
-    if (!reEntryLine) return 0;
-
-    return Number(reEntryLine.split(' ')[8].split(',').join(''));
-  };
-
-  // Helper
-  const wonTournament = (): boolean =>
-    lines.some((line) => line.includes('You finished in 1st place'));
-
   return {
-    wins: calcWin(),
-    buyIns: calcBuyIn() + calcReEntriesSum(),
-    tournamentWins: wonTournament() ? 1 : 0,
+    wins: calcWinSum(lines),
+    buyIns: calcBuyIn(lines) + calcReEntriesSum(lines),
+    tournamentWins: didWinTournament(lines) ? 1 : 0,
     tournamentCount: 1
   };
 };
 
-const calculateTotalStats = (statsList: TournamentStats[]): TournamentStats =>
-  statsList.reduce(
+const calculateTotalStats = (recordList: TournamentStats[]): TournamentStats =>
+  recordList.reduce(
     (acc, current) => ({
       wins: acc.wins + current.wins,
       buyIns: acc.buyIns + current.buyIns,
@@ -64,15 +37,6 @@ const calculateTotalStats = (statsList: TournamentStats[]): TournamentStats =>
     }),
     createTournamentStatsObject()
   );
-
-const getTournamentStats = (folderPath: string): TournamentStats => {
-  const tournamentStatsList =
-    FileHandler.getFilePathsFromFolder(folderPath).map(calcStatsFromFile);
-
-  const totalStats = calculateTotalStats(tournamentStatsList);
-
-  return totalStats;
-};
 
 const logStatistics = (stats: TournamentStats) => {
   const { wins, buyIns, tournamentCount, tournamentWins } = stats;
@@ -94,9 +58,43 @@ const logStatistics = (stats: TournamentStats) => {
   spacingLog('Diff on buy-ins and winnings', winBuyInsDiff, diffTextColor);
 };
 
-const executeTournamentHistory = () => {
-  const stats = getTournamentStats(ENV.TOURNAMENT_STATISTICS_FOLDER_PATH);
-  logStatistics(stats);
+/**
+ * Calculate helpers for each tournament file
+ */
+const calcWinSum = (lines: string[]): number => {
+  const playerLine = lines
+    .map((line) => line.trim())
+    .find((line) => line.includes(ENV.PLAYER_NAME));
+
+  const parts = playerLine?.split(' ');
+  if (!parts || parts.length < 4) return 0;
+
+  const win = Number(parts[3].split(',').join(''));
+
+  return Number.isNaN(win) ? 0 : win;
 };
+
+const calcBuyIn = (lines: string[]): number => {
+  const lineBuyIn = lines
+    .find((line) => line.includes('Buy-In'))
+    ?.split(':')[1];
+
+  if (!lineBuyIn) {
+    throw new Error('Could not find buy-in for tournament');
+  }
+
+  const [buyIn, rake] = lineBuyIn.split('/').map(Number);
+  return buyIn + rake;
+};
+
+const calcReEntriesSum = (lines: string[]): number => {
+  const reEntryLine = lines.find((line) => line.includes('re-entries'));
+  if (!reEntryLine) return 0;
+
+  return Number(reEntryLine.split(' ')[8].split(',').join(''));
+};
+
+const didWinTournament = (lines: string[]) =>
+  lines.some((line) => line.includes('You finished in 1st place'));
 
 export default executeTournamentHistory;

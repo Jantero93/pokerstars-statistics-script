@@ -27,18 +27,18 @@ export const createKnownGamesList = (): PokerGame[] => [
   'Razz'
 ];
 
-export const findLongestGameName = (): string =>
+export const findLongestGameName = () =>
   createKnownGamesList().reduce(
     (longest, current) => (current.length > longest.length ? current : longest),
     ''
   );
 
-export type PlayedHands = Record<PokerGame | 'UNKNOWN', number>;
+export type PokerGameRecord = Record<PokerGame | 'UNKNOWN', number>;
 
 /**
- * @returns Initialize record of game and played hands
+ * @returns Initialize record of pokergame and number
  */
-export const createPlayedHandsObject = (): PlayedHands => ({
+export const createPokerGamesNumberRecord = (): PokerGameRecord => ({
   '7 Card Stud Hi/Lo': 0,
   '7 Card Stud': 0,
   "Hold'em Limit": 0,

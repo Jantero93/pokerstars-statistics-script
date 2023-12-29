@@ -1,7 +1,6 @@
 import * as fs from 'fs';
-import * as path from 'path';
-import ENV from './utils/env';
-import { PokerGame, createPlayedHandsObject } from './types';
+import ENV from './utils/env/env';
+import { PokerGame, createPokerGamesNumberRecord } from './types';
 
 const SUMMARY_HEADER = '*** SUMMARY ***';
 const POKERSTARTS_HEADER = 'PokerStars Hand #';
@@ -12,8 +11,8 @@ type ActionTerm = 'bets' | 'calls' | 'raises' | 'posts';
 type Term = WinningTerm | LosingTerm | ActionTerm;
 
 // Value is number so its valid for calculation cash sums
-const _wonGames = createPlayedHandsObject();
-const _lostGames = createPlayedHandsObject();
+const _wonGames = createPokerGamesNumberRecord();
+const _lostGames = createPokerGamesNumberRecord();
 
 let rake = 0;
 let playedHands = 0;

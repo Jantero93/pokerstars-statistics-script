@@ -37,17 +37,17 @@ const colorCodes: Record<ConsoleColor, number> = {
 
 const finLocalization = 'fi-Fi';
 
-const localizeNumberToString = (value: number): string =>
+const localizeNumberToString = (value: number) =>
   value.toLocaleString(finLocalization);
 
-const inputContainsNumber = (input: string): boolean => /\d/.test(input);
+const inputContainsNumber = (input: string) => /\d/.test(input);
 
-const localizeStringWithNumber = (input: string): string =>
+const localizeStringWithNumber = (input: string) =>
   input.replace(/(\d+)/g, (match) =>
     Number(match).toLocaleString(finLocalization)
   );
 
-const logger = (input: LogInputTypes, color?: ConsoleColor): void => {
+const logger = (input: LogInputTypes, color?: ConsoleColor) => {
   if (typeof input === 'string' && inputContainsNumber(input)) {
     input = localizeStringWithNumber(input);
   }
