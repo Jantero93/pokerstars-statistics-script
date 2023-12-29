@@ -3,11 +3,11 @@ import logger from './utils/logger';
 import FileHandler from './utils/filereader';
 import {
   PokerGame,
-  createPokerGamesNumberRecord,
-  createKnownGamesList,
   PokerGameRecord,
+  createKnownGamesList,
+  createPokerGamesNumberRecord,
   findLongestGameName
-} from './types';
+} from './types/general';
 
 /**
  * Array of unrecognized hands
@@ -93,16 +93,25 @@ const logPlayedHands = (stats: PokerGameRecord) => {
       return `${game}${spaces}${gameCount}`;
     });
 
+  /** linebreak */
+  const character = '-';
+  const longestLogStringLenght = logStrings.reduce(
+    (maxLength, currentString) => Math.max(maxLength, currentString.length),
+    0
+  );
+  const linebreak = character.repeat(longestLogStringLenght);
+
   /** Get total sum of played hands strings */
   const allPlayedHeader = 'All played hands';
   const headerSpaces = ' '.repeat(
     findLongestGameName().length - allPlayedHeader.length + 2
   );
-  const allPlayedString = `\n${allPlayedHeader}${headerSpaces}${allPlayedHandsCount}`;
+  const allPlayedString = `${allPlayedHeader}${headerSpaces}${allPlayedHandsCount}`;
 
   //** Log everything */
   logger('--- Played hands by game ---', 'magenta');
   logStrings.forEach((logString) => logger(logString));
+  logger(linebreak);
   logger(allPlayedString, 'cyan');
 
   if (unknownHandsList.length || stats.UNKNOWN) {

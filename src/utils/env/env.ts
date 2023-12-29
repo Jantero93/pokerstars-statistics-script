@@ -6,7 +6,11 @@ export interface EnvConfig {
   HAND_HISTORY_FOLDER_PATH: string;
   TOURNAMENT_STATISTICS_FOLDER_PATH: string;
   PLAYER_NAME: string;
+  LOCALIZATION: string;
 }
+
+export const getSystemLocalization = (env = process.env) =>
+  env.LC_ALL ?? env.LC_MESSAGES ?? env.LANG ?? env.LANGUAGE ?? 'en_US';
 
 const getEnv = (): EnvConfig => {
   const envsFromFile = getEnvFromFile();

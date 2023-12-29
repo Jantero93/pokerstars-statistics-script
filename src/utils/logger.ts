@@ -43,7 +43,7 @@ const localizeNumberToString = (value: number) =>
 const inputContainsNumber = (input: string) => /\d/.test(input);
 
 const localizeStringWithNumber = (input: string) =>
-  input.replace(/(\d+)/g, (match) =>
+  input.replace(/(\d+(\.\d+)?)/g, (match) =>
     Number(match).toLocaleString(finLocalization)
   );
 

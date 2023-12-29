@@ -50,23 +50,3 @@ export const createPokerGamesNumberRecord = (): PokerGameRecord => ({
   Razz: 0,
   UNKNOWN: 0
 });
-
-/***
- * General statistics type for tournament and sit & go's
- */
-export type TournamentStats = {
-  buyIns: number;
-  wins: number;
-  tournamentCount: number;
-  tournamentWins: number;
-};
-
-/**
- * @returns Initializes general tournament and sit & go statistics object
- */
-export const createTournamentStatsObject = (): TournamentStats => ({
-  buyIns: 0,
-  wins: 0,
-  tournamentCount: 0,
-  tournamentWins: 0
-});

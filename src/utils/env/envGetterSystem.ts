@@ -2,7 +2,7 @@ import * as os from 'os';
 import * as fs from 'fs';
 import * as path from 'path';
 import logger from '../logger';
-import { EnvConfig } from './env';
+import { EnvConfig, getSystemLocalization } from './env';
 
 const tryGetDefaultEnvValues = (): EnvConfig | null => {
   const { homedir } = os.userInfo();
@@ -34,7 +34,8 @@ const tryGetDefaultEnvValues = (): EnvConfig | null => {
   return {
     HAND_HISTORY_FOLDER_PATH: fullHandPath,
     PLAYER_NAME: playerName,
-    TOURNAMENT_STATISTICS_FOLDER_PATH: fullTournamentPath
+    TOURNAMENT_STATISTICS_FOLDER_PATH: fullTournamentPath,
+    LOCALIZATION: getSystemLocalization()
   };
 };
 
