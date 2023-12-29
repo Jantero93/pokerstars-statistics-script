@@ -1,8 +1,7 @@
 import * as os from 'os';
 import * as fs from 'fs';
 import * as path from 'path';
-import logger from '../logger';
-import { EnvConfig, getSystemLocalization } from './env';
+import { EnvConfig } from './env';
 
 const tryGetDefaultEnvValues = (): EnvConfig | null => {
   const { homedir } = os.userInfo();
@@ -34,8 +33,7 @@ const tryGetDefaultEnvValues = (): EnvConfig | null => {
   return {
     HAND_HISTORY_FOLDER_PATH: fullHandPath,
     PLAYER_NAME: playerName,
-    TOURNAMENT_STATISTICS_FOLDER_PATH: fullTournamentPath,
-    LOCALIZATION: getSystemLocalization()
+    TOURNAMENT_STATISTICS_FOLDER_PATH: fullTournamentPath
   };
 };
 
@@ -51,27 +49,24 @@ const getPlayerNameFromhandhistoryFolder = (
     if (folders.length > 1) {
       const logMsg = `Found multiple player folders in, picking the first one: ${folders[0]}`;
       const logMsg2 =
-        'Please set PLAYER_NAME in .env file ' +
-        'if you want different player account';
-
-      logger(logMsg, 'yellow');
-      logger(logMsg2, 'yellow');
+        'Please set environment variables in .env file if you want use different account';
+      console.warn(logMsg);
+      console.warn(logMsg2);
     }
 
     if (folders.length <= 0) {
-      logger('Not found player folder(s) in default path', 'red');
-      logger(
-        'Please provide HandHistory and/or TournSummary folder path in .env',
-        'red'
+      console.error('Not found player folder(s) in default path');
+      console.error(
+        'Please provide HandHistory and/or TournSummary folder path in .env'
       );
       return null;
     }
 
     return folders[0];
   } catch (e) {
-    const errorMsg = JSON.stringify((e as Error).message);
-    logger('Generic error on getting envs automatically:', 'red');
-    logger(errorMsg, 'red');
+    const errorMsg = (e as Error).message;
+    console.error('Generic error on getting envs automatically:');
+    console.error(errorMsg);
     return null;
   }
 };

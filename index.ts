@@ -3,6 +3,8 @@ import ExecHandHistory from './src/playhandHistory';
 import ExecTournamentHistory from './src/tournamentHistory';
 
 const exec = (): void => {
+  console.clear();
+
   ExecHandHistory();
   ExecTournamentHistory();
 };

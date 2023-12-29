@@ -1,3 +1,5 @@
+import { getSystemLocalization } from './env/localization';
+
 export type ConsoleColor =
   | 'reset'
   | 'bright'
@@ -35,18 +37,37 @@ const colorCodes: Record<ConsoleColor, number> = {
   white: 37
 };
 
-const finLocalization = 'fi-Fi';
+// Get localization of environment
+const localization = getSystemLocalization();
 
 const localizeNumberToString = (value: number) =>
-  value.toLocaleString(finLocalization);
+  value.toLocaleString(localization);
 
+/**
+ * Checks input contains integer
+ * @param input String variable
+ * @returns True if contains integer
+ */
 const inputContainsNumber = (input: string) => /\d/.test(input);
 
+/**
+ * Localizes number in string input. Number may be integer or decimal.
+ * @param input String input
+ * @returns String as it is but number localised
+ * @example (fi-FI) 'The number is 2000.35' --> 'The number is 2 000,35'
+ */
 const localizeStringWithNumber = (input: string) =>
   input.replace(/(\d+(\.\d+)?)/g, (match) =>
-    Number(match).toLocaleString(finLocalization)
+    Number(match).toLocaleString(localization)
   );
 
+/**
+ * Custom logger. Colors works at least on bash, powershell, cmd
+ *
+ * Under hood uses native console.log
+ * @param input String, number, array
+ * @param color Color of console input
+ */
 const logger = (input: LogInputTypes, color?: ConsoleColor) => {
   if (typeof input === 'string' && inputContainsNumber(input)) {
     input = localizeStringWithNumber(input);

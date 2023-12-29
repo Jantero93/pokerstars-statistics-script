@@ -1,15 +1,19 @@
 import path from 'path';
-import { EnvConfig, getSystemLocalization } from './env';
+import { EnvConfig } from './env';
 import * as dotenv from 'dotenv';
 
 // .env should be located on root folder
-const setEnvConfig = () => {
+const setEnvFileConfig = () => {
   const dotEnvLocation = path.join(__dirname, '../../..', '.env');
   dotenv.config({ path: dotEnvLocation });
 };
 
+/**
+ * Set config related .env file and try to get values
+ * @returns EnvConfig or null is one needed value is not set
+ */
 const getEnvFromFile = (): EnvConfig | null => {
-  setEnvConfig();
+  setEnvFileConfig();
 
   const { env } = process;
 
@@ -17,8 +21,7 @@ const getEnvFromFile = (): EnvConfig | null => {
     HAND_HISTORY_FOLDER_PATH: env['HAND_HISTORY_FOLDER_PATH'] ?? '',
     TOURNAMENT_STATISTICS_FOLDER_PATH:
       env['TOURNAMENT_STATISTICS_FOLDER_PATH'] ?? '',
-    PLAYER_NAME: env['PLAYER_NAME'] ?? '',
-    LOCALIZATION: getSystemLocalization()
+    PLAYER_NAME: env['PLAYER_NAME'] ?? ''
   };
 
   return Object.values(envs).every((value) => value !== '')

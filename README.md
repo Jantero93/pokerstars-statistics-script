@@ -15,45 +15,54 @@ Simple script(s) to track history. This will use console.log to print statistics
 <h2>Features</h2>
 
 Keeps track of count of played hands for each game. (list above). This includes cash and tournament games. Doesn't print games which have not been played (count 0).
+
+It tryies to find localization from your system. Fallback value is "en-US"
 <br/>
 
 **From tournaments and sit & go's this keeps track on:**
 
-* Total tournament plays
-* Wins
+* Total games plays
+* Total wins
+* Winning percentage
 * Tournament earnings
-* Buy-in & re-entries
+* Paid buy-ins & re-entries
 * Shows difference between wins and buy-ins & re-entries
 
-**Example output of script time when readme is updated.**
+**Example output of script time when readme is updated. (fi-FI) localization**
 ```
 --- Played hands by game ---
-Hold'em No Limit         985
-Omaha Hi/Lo Limit        321
-7 Card Stud Hi/Lo        320
-Razz                     318
-Hold'em Limit            304
-7 Card Stud              296
-Triple Draw 2-7 Lowball  278
-Omaha Pot Limit          272
+Hold'em No Limit         1 207
+Omaha Hi/Lo Limit        386
+Razz                     384
+Hold'em Limit            374
+7 Card Stud Hi/Lo        357
+7 Card Stud              347
+Triple Draw 2-7 Lowball  329
+Omaha Pot Limit          314
 Omaha Hi/Lo Pot Limit    1
-
-All played hands         3 095
+-----------------------------
+All played hands         3 699
 
 --- Tournament, sit & go statistics ---
-Played tournaments             9
-Tournament, sit & go wins      4
-Earned money                   410 125
-Paid buy-ins (and rebuyis)     230 000
-Diff on buy-ins and winnings   180 125
+Total games                   13
+Total wins                    5
+Winning percentage            38,46 %
+Earned money                  588 625
+Paid buy-ins (and rebuys)     330 000
+Diff on buy-ins and winnings  258 625
 ```
 
 <h2>Build project</h2>
 You need Node 17 (lower version may be ok, not tested). Im not sure will this work with >= Node 20.0.6 because env is built-in.
 
-If you have installed PokerStars on default path and you have only one player account, script will detect automatically needed env variables automatically. Otherwise you need set them manually on .env file on project root. There is .env.example to show what it should look like.
+If you have installed PokerStars on default path and you have only one player account, script will try to detect automatically needed env variables.
+<b>Otherwise you need set folder paths AND player name manually on .env file on project root.</b>
 
-Run commands
+Localization is optional.
+
+There is .env.example with instructions to show what it should look like.
+
+Run commands on root to compile & build project
 
 > npm install
 
@@ -73,11 +82,9 @@ START_DIR=$(PWD)
 
 cd /C/Users/<some path>/pokerstatistics/dist
 clear
-
-node -e "console.clear()"
 node index.js
-
 cd $START_DIR
+
 exit 0
 ```
 <h2>Bugs</h2>

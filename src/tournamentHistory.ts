@@ -1,4 +1,4 @@
-import ENV from './utils/env/env';
+import { ENV } from './utils/env/env';
 import logger, { ConsoleColor } from './utils/logger';
 import FileHandler from './utils/filereader';
 import {
@@ -57,7 +57,7 @@ const logStatistics = (stats: TournamentStats) => {
   };
 
   logger('\n--- Tournament, sit & go statistics ---', 'magenta');
-  spacingLog("Total games", tournamentCount);
+  spacingLog('Total games', tournamentCount);
   spacingLog('Total wins', tournamentWins);
   spacingLog('Winning percentage', winPercentageString);
   spacingLog('Earned money', wins);
