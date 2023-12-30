@@ -1,4 +1,4 @@
-import { ENV } from './utils/env/env';
+import ENV from './utils/env/env';
 import logger from './utils/logger';
 import FileHandler from './utils/filereader';
 import {

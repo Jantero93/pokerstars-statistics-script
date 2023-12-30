@@ -1,5 +1,5 @@
 import * as fs from 'fs';
-import { ENV } from './utils/env/env';
+import ENV from './utils/env/env';
 import { createPokerGamesNumberRecord, PokerGame } from './types/general';
 
 const SUMMARY_HEADER = '*** SUMMARY ***';

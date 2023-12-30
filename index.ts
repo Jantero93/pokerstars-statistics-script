@@ -2,7 +2,7 @@
 import ExecHandHistory from './src/playhandHistory';
 import ExecTournamentHistory from './src/tournamentHistory';
 
-const exec = (): void => {
+const exec = () => {
   console.clear();
 
   ExecHandHistory();

@@ -22,8 +22,8 @@
   },
   "dependencies": {
     "dotenv": "^16.3.1",
-    "node": "^21.2.0",
-    "os-locale": "^6.0.2"
+    "get-user-locale": "^2.3.1",
+    "node": "^21.2.0"
   },
   "devDependencies": {
     "@types/node": "^20.10.5",

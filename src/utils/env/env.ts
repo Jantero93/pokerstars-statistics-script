@@ -1,21 +1,38 @@
+import setEnvFileConfig from './envFileConfig';
 import tryGetEnvVariablesAutomatically from './envGetterSystem';
 import getEnvFromFile from './envGetterFile';
+import getSystemLocalization from './localization';
 
-export interface EnvConfig {
+export type Env = SystemEnv & Localization;
+
+export type SystemEnv = {
   HAND_HISTORY_FOLDER_PATH: string;
   TOURNAMENT_STATISTICS_FOLDER_PATH: string;
   PLAYER_NAME: string;
-}
+};
+
+type Localization = {
+  LOCALIZATION: string;
+};
 
 /**
  * @returns Environment variables. First checks from .env
  * file and then try to detect from os
  */
-export const getEnv = (): EnvConfig => {
-  const envsFromFile = getEnvFromFile();
+const getEnv = (): Env => {
+  setEnvFileConfig();
 
-  if (envsFromFile) {
-    return envsFromFile;
+  const localizationLanguage = getSystemLocalization();
+
+  const systemEnvsFile = getEnvFromFile();
+
+  if (systemEnvsFile) {
+    const allEnv = {
+      ...systemEnvsFile,
+      LOCALIZATION: localizationLanguage
+    };
+
+    return allEnv;
   }
 
   const envsGetAutomatically = tryGetEnvVariablesAutomatically();
@@ -29,7 +46,8 @@ export const getEnv = (): EnvConfig => {
     );
   }
 
-  return envsGetAutomatically;
+  return { ...envsGetAutomatically, LOCALIZATION: localizationLanguage };
 };
 
-export const ENV = getEnv();
+const ENV = getEnv();
+export default ENV;

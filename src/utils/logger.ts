@@ -1,5 +1,4 @@
-import { getSystemLocalization } from './env/localization';
-
+import ENV from './env/env';
 export type ConsoleColor =
   | 'reset'
   | 'bright'
@@ -38,7 +37,7 @@ const colorCodes: Record<ConsoleColor, number> = {
 };
 
 // Get localization of environment
-const localization = getSystemLocalization();
+const localization = ENV.LOCALIZATION;
 
 const localizeNumberToString = (value: number) =>
   value.toLocaleString(localization);
@@ -54,7 +53,8 @@ const inputContainsNumber = (input: string) => /\d/.test(input);
  * Localizes number in string input. Number may be integer or decimal.
  * @param input String input
  * @returns String as it is but number localised
- * @example (fi-FI) 'The number is 2000.35' --> 'The number is 2 000,35'
+ * @example const localized = localizeStringWithNumber('The number is 2000.35')
+ * console.log(localized) // "The number is 2 000,35" (fi-FI)
  */
 const localizeStringWithNumber = (input: string) =>
   input.replace(/(\d+(\.\d+)?)/g, (match) =>

@@ -1,32 +1,22 @@
-import path from 'path';
-import { EnvConfig } from './env';
-import * as dotenv from 'dotenv';
-
-// .env should be located on root folder
-const setEnvFileConfig = () => {
-  const dotEnvLocation = path.join(__dirname, '../../..', '.env');
-  dotenv.config({ path: dotEnvLocation });
-};
+import { SystemEnv } from './env';
 
 /**
- * Set config related .env file and try to get values
- * @returns EnvConfig or null is one needed value is not set
+ * Set config from .env file
+ * @returns SystemConfig or null if any value is not set
  */
-const getEnvFromFile = (): EnvConfig | null => {
-  setEnvFileConfig();
-
+const getEnvFromFile = (): SystemEnv | null => {
   const { env } = process;
 
-  const envs: EnvConfig = {
-    HAND_HISTORY_FOLDER_PATH: env['HAND_HISTORY_FOLDER_PATH'] ?? '',
-    TOURNAMENT_STATISTICS_FOLDER_PATH:
-      env['TOURNAMENT_STATISTICS_FOLDER_PATH'] ?? '',
-    PLAYER_NAME: env['PLAYER_NAME'] ?? ''
+  const envs = {
+    HAND_HISTORY_FOLDER_PATH: env['HAND_HISTORY_FOLDER_PATH'],
+    TOURNAMENT_STATISTICS_FOLDER_PATH: env['TOURNAMENT_STATISTICS_FOLDER_PATH'],
+    PLAYER_NAME: env['PLAYER_NAME']
   };
 
-  return Object.values(envs).every((value) => value !== '')
-    ? (envs as unknown as EnvConfig)
-    : null;
+  return isSystemEnv(envs) ? envs : null;
 };
+
+const isSystemEnv = (envObj: any): envObj is SystemEnv =>
+  Object.values(envObj).every((value) => value !== undefined);
 
 export default getEnvFromFile;

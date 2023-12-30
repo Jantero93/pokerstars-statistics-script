@@ -1,9 +1,9 @@
 import * as os from 'os';
 import * as fs from 'fs';
 import * as path from 'path';
-import { EnvConfig } from './env';
+import { SystemEnv } from './env';
 
-const tryGetDefaultEnvValues = (): EnvConfig | null => {
+const tryGetDefaultEnvValues = (): SystemEnv | null => {
   const { homedir } = os.userInfo();
   const tournamentFolderName = 'TournSummary';
   const handHistoryFolderName = 'HandHistory';
