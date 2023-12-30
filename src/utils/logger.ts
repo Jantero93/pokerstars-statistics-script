@@ -16,7 +16,7 @@ export type ConsoleColor =
   | 'cyan'
   | 'white';
 
-type LogInputTypes = string | Array<unknown> | number;
+export type LogInput = string | Array<unknown> | number;
 
 const colorCodes: Record<ConsoleColor, number> = {
   reset: 0,
@@ -68,7 +68,7 @@ const localizeStringWithNumber = (input: string) =>
  * @param input String, number, array
  * @param color Color of console input
  */
-const logger = (input: LogInputTypes, color?: ConsoleColor) => {
+const logger = (input: LogInput, color?: ConsoleColor) => {
   if (typeof input === 'string' && inputContainsNumber(input)) {
     input = localizeStringWithNumber(input);
   }

@@ -2,8 +2,9 @@ import setEnvFileConfig from './envFileConfig';
 import tryGetEnvVariablesAutomatically from './envGetterSystem';
 import getEnvFromFile from './envGetterFile';
 import getSystemLocalization from './localization';
+import { getMinimunPlaysToShow } from './otherEnvGetters';
 
-export type Env = SystemEnv & Localization;
+export type Env = SystemEnv & Localization & MinGamesShow;
 
 export type SystemEnv = {
   HAND_HISTORY_FOLDER_PATH: string;
@@ -13,6 +14,10 @@ export type SystemEnv = {
 
 type Localization = {
   LOCALIZATION: string;
+};
+
+type MinGamesShow = {
+  MIN_GAMES_SHOW: number;
 };
 
 /**
@@ -29,6 +34,7 @@ const getEnv = (): Env => {
   if (systemEnvsFile) {
     const allEnv = {
       ...systemEnvsFile,
+      MIN_GAMES_SHOW: getMinimunPlaysToShow(),
       LOCALIZATION: localizationLanguage
     };
 
@@ -46,7 +52,11 @@ const getEnv = (): Env => {
     );
   }
 
-  return { ...envsGetAutomatically, LOCALIZATION: localizationLanguage };
+  return {
+    ...envsGetAutomatically,
+    MIN_GAMES_SHOW: getMinimunPlaysToShow(),
+    LOCALIZATION: localizationLanguage
+  };
 };
 
 const ENV = getEnv();

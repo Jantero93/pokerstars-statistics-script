@@ -1,5 +1,5 @@
 import ENV from './utils/env/env';
-import logger, { ConsoleColor } from './utils/logger';
+import logger, { ConsoleColor, LogInput } from './utils/logger';
 import FileHandler from './utils/filereader';
 import {
   TournamentStats,
@@ -36,7 +36,8 @@ const calculateTotalStats = (recordList: TournamentStats[]): TournamentStats =>
       earnings: acc.earnings + current.earnings,
       buyIns: acc.buyIns + current.buyIns,
       tournamentWins: acc.tournamentWins + current.tournamentWins,
-      tournamentCount: acc.tournamentCount + current.tournamentCount
+      tournamentCount: acc.tournamentCount + current.tournamentCount,
+      earnedPercentage: 0
     }),
     createTournamentStatsObject()
   );
@@ -47,22 +48,49 @@ const logStatistics = (stats: TournamentStats) => {
   const winPercentageString = `${calcTournamentWinPercentage(stats).toFixed(
     2
   )} %`;
-  const diffTextColor = winBuyInsDiff <= 0 ? 'red' : 'green';
+  const earningsComparedCosts = calcEarningComparedToCosts(buyIns, wins);
+  const earningComparedLogColor = getEarningLogColor(earningsComparedCosts);
+  const earningsComparePercentage = `${earningsComparedCosts.toFixed(2)} %`;
 
-  const labelSpacing = (label: string) =>
-    ' '.repeat(Math.max(0, 30 - label.length));
+  const diffTextColor = getEarningLogColor(winBuyInsDiff);
 
-  const spacingLog = (label: string, value: any, color?: ConsoleColor) => {
-    logger(`${label}${labelSpacing(label)}${value}`, color);
+  const getMaxLabelLength = () => {
+    const labels = [
+      'Total games',
+      'Total wins',
+      'Winning percentage',
+      'Earned money',
+      'Paid buy-ins (and rebuys)',
+      'Diff on buy-ins and winnings',
+      'Earnings compared to costs'
+    ];
+
+    return Math.max(...labels.map((label) => label.length));
+  };
+
+  const alignConsoleLog = (
+    label: string,
+    value: LogInput,
+    color?: ConsoleColor
+  ) => {
+    const labelSpacing = ' '.repeat(
+      Math.max(0, getMaxLabelLength() - label.length + 2)
+    );
+    logger(`${label}${labelSpacing}${value}`, color);
   };
 
   logger('\n--- Tournament, sit & go statistics ---', 'magenta');
-  spacingLog('Total games', tournamentCount);
-  spacingLog('Total wins', tournamentWins);
-  spacingLog('Winning percentage', winPercentageString);
-  spacingLog('Earned money', wins);
-  spacingLog('Paid buy-ins (and rebuys)', buyIns);
-  spacingLog('Diff on buy-ins and winnings', winBuyInsDiff, diffTextColor);
+  alignConsoleLog('Total games', tournamentCount);
+  alignConsoleLog('Total wins', tournamentWins);
+  alignConsoleLog('Winning percentage', winPercentageString);
+  alignConsoleLog('Earned money', wins);
+  alignConsoleLog('Paid buy-ins (and rebuys)', buyIns);
+  alignConsoleLog('Diff on buy-ins and winnings', winBuyInsDiff, diffTextColor);
+  alignConsoleLog(
+    'Earnings compared to costs',
+    earningsComparePercentage,
+    earningComparedLogColor
+  );
 };
 
 /**
@@ -116,4 +144,22 @@ const calcTournamentWinPercentage = (stats: TournamentStats): number => {
 
   return (tournamentWins / tournamentCount) * 100;
 };
+
+const calcEarningComparedToCosts = (
+  costs: number,
+  earnings: number
+): number => {
+  if (costs === 0) return 0;
+
+  return ((earnings - costs) / costs) * 100;
+};
+
+/**
+ *
+ * @param value Number input
+ * @returns "red" if value is under 0, otherwise "green"
+ */
+const getEarningLogColor = (value: number): 'red' | 'green' =>
+  value <= 0 ? 'red' : 'green';
+
 export default executeTournamentHistory;

@@ -87,7 +87,7 @@ const logPlayedHands = (stats: PokerGameRecord) => {
 
   /** Create logging strings by each game */
   const logStrings = Object.entries(stats)
-    .filter(([_game, gameCount]) => gameCount !== 0)
+    .filter(([_game, gameCount]) => gameCount >= ENV.MIN_GAMES_SHOW)
     .map(([game, gameCount]) => {
       const spaces = ' '.repeat(findLongestGameName().length - game.length + 2);
       return `${game}${spaces}${gameCount}`;
@@ -99,7 +99,7 @@ const logPlayedHands = (stats: PokerGameRecord) => {
     (maxLength, currentString) => Math.max(maxLength, currentString.length),
     0
   );
-  const linebreak = character.repeat(longestLogStringLenght);
+  const linebreak = character.repeat(longestLogStringLenght + character.length);
 
   /** Get total sum of played hands strings */
   const allPlayedHeader = 'All played hands';
@@ -108,7 +108,7 @@ const logPlayedHands = (stats: PokerGameRecord) => {
   );
   const allPlayedString = `${allPlayedHeader}${headerSpaces}${allPlayedHandsCount}`;
 
-  //** Log everything */
+  /** Log everything */
   logger('--- Played hands by game ---', 'magenta');
   logStrings.forEach((logString) => logger(logString));
   logger(linebreak);

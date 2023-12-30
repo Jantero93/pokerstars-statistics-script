@@ -1,4 +1,4 @@
-// Main entry point to execute history statistics
+// Statistics modules
 import ExecHandHistory from './src/playhandHistory';
 import ExecTournamentHistory from './src/tournamentHistory';
 
@@ -9,4 +9,5 @@ const exec = () => {
   ExecTournamentHistory();
 };
 
+// Main entry point to execute script
 exec();

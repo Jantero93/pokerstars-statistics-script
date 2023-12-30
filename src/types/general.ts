@@ -10,7 +10,9 @@ export type PokerGame =
   | 'Omaha Hi/Lo Pot Limit'
   | 'Triple Draw 2-7 Lowball'
   | 'Omaha Pot Limit'
-  | 'Razz';
+  | 'Razz'
+  | '5 Card Draw No Limit'
+  | 'Omaha No Limit';
 
 /**
  * @returns Create array of strings known poker games
@@ -24,7 +26,9 @@ export const createKnownGamesList = (): PokerGame[] => [
   'Omaha Hi/Lo Pot Limit',
   'Triple Draw 2-7 Lowball',
   'Omaha Pot Limit',
-  'Razz'
+  'Razz',
+  '5 Card Draw No Limit',
+  'Omaha No Limit'
 ];
 
 export const findLongestGameName = () =>
@@ -48,5 +52,7 @@ export const createPokerGamesNumberRecord = (): PokerGameRecord => ({
   'Triple Draw 2-7 Lowball': 0,
   'Omaha Pot Limit': 0,
   Razz: 0,
-  UNKNOWN: 0
+  UNKNOWN: 0,
+  '5 Card Draw No Limit': 0,
+  'Omaha No Limit': 0
 });

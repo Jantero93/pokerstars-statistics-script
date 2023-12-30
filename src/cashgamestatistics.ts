@@ -17,19 +17,6 @@ const _lostGames = createPokerGamesNumberRecord();
 let rake = 0;
 let playedHands = 0;
 
-const txtContentByGame: Record<PokerGame | 'UNKNOWN', string[][]> = {
-  '7 Card Stud Hi/Lo': [],
-  '7 Card Stud': [],
-  "Hold'em Limit": [],
-  "Hold'em No Limit": [],
-  'Omaha Hi/Lo Limit': [],
-  'Omaha Hi/Lo Pot Limit': [],
-  'Triple Draw 2-7 Lowball': [],
-  'Omaha Pot Limit': [],
-  Razz: [],
-  UNKNOWN: []
-};
-
 const readAllCashGameEarnings = (folderPath: string) => {
   const filepaths = fs
     .readdirSync(folderPath)
