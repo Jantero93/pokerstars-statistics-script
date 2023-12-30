@@ -1,9 +1,14 @@
 import * as os from 'os';
 import * as fs from 'fs';
 import * as path from 'path';
-import { SystemEnv } from './env';
+import { SystemEnv } from '../types';
 
-const tryGetDefaultEnvValues = (): SystemEnv | null => {
+/**
+ * Try to get essential environment variables from system
+ * @returns {SystemEnv | null} Return null if can not detenct environment
+ * variables from system
+ */
+const getEnvValuesFromOs = (): SystemEnv | null => {
   const { homedir } = os.userInfo();
   const tournamentFolderName = 'TournSummary';
   const handHistoryFolderName = 'HandHistory';
@@ -37,6 +42,13 @@ const tryGetDefaultEnvValues = (): SystemEnv | null => {
   };
 };
 
+/**
+ * @param handHistoryPath Hand history folder path.
+ * This folder includes player/accounts history folders
+ * @returns {string | null} Folder name which equals player name.
+ *
+ * If hand history folder contains multiple folders then first one will be picked
+ */
 const getPlayerNameFromhandhistoryFolder = (
   handHistoryPath: string
 ): string | null => {
@@ -71,4 +83,4 @@ const getPlayerNameFromhandhistoryFolder = (
   }
 };
 
-export default tryGetDefaultEnvValues;
+export default getEnvValuesFromOs;

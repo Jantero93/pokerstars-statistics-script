@@ -1,4 +1,4 @@
-import ENV from './env/env';
+import ENV from './env/index';
 export type ConsoleColor =
   | 'reset'
   | 'bright'

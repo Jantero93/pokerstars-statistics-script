@@ -1,8 +1,9 @@
-import { SystemEnv } from './env';
+import { SystemEnv } from '../types';
 
 /**
+ * Get essential configuration from .env file
  * Set config from .env file
- * @returns SystemConfig or null if any value is not set
+ * @returns {SystemEnv | null} SystemConfig or null if any value is not set
  */
 const getEnvFromFile = (): SystemEnv | null => {
   const { env } = process;

@@ -6,7 +6,7 @@ import path from 'path';
  */
 const setEnvFileConfig = () => {
   const pathToRoot = '../../..';
-  const dotEnvLocation = path.join(__dirname, pathToRoot, '.env');
+  const dotEnvLocation = path.resolve(__dirname, pathToRoot, '.env');
 
   dotenv.config({ path: dotEnvLocation });
 };
