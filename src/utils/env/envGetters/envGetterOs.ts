@@ -58,23 +58,21 @@ const getPlayerNameFromhandhistoryFolder = (
       .filter((entry) => entry.isDirectory())
       .map((folder) => folder.name);
 
-    if (folders.length > 1) {
-      const logMsg = `Found multiple player folders in, picking the first one: ${folders[0]}`;
-      const logMsg2 =
-        'Please set environment variables in .env file if you want use different account';
-      console.warn(logMsg);
-      console.warn(logMsg2);
+    const playerFolder = folders.at(0);
+
+    if (folders.length > 1 && playerFolder) {
+      console.warn(`Found multiple player folders in, picking the first one: ${playerFolder}
+        Please set environment variables in .env file if you want use different account`);
+      return playerFolder;
     }
 
-    if (folders.length <= 0) {
-      console.error('Not found player folder(s) in default path');
-      console.error(
-        'Please provide HandHistory and/or TournSummary folder path in .env'
-      );
+    if (folders.length === 0) {
+      console.error(`Not found player folder(s) in default path
+      Please provide HandHistory and/or TournSummary folder path in .env`);
       return null;
     }
 
-    return folders[0];
+    return playerFolder ?? null;
   } catch (e) {
     const errorMsg = (e as Error).message;
     console.error('Generic error on getting envs automatically:');
