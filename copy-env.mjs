@@ -7,13 +7,14 @@ import * as path from 'path';
  * @returns {boolean} True if .env file exists in root folder of project
 */
 const checkEnvFileExists = () => {
-  const filepath = path.join(__dirname, 'dist', '.env');
+  const rootDir = path.dirname(import.meta.url)
+  const filepath = path.join(rootDir, 'dist', '.env');
   return fs.existsSync(filepath);
 };
 
 /**
  * Moves .env file to dist folder
- * @returns {boolean} True if .env file exists and is moved to dist folder.
+ * @returns {boolean} True if .env file exists on root folder and is copied to dist folder.
  * Otherwise false
 */
 const envFileMover = () => {

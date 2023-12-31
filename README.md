@@ -1,77 +1,103 @@
-<h1>PokerStars statistics</h1>
-Simple script(s) to track history. This will use console.log to print statistics to terminal
-<h2>Supported games</h2>
+# PokerStars Statistics
+
+This script is designed to track poker game history and uses `console.log` to print statistics only to the terminal.
+
+## Supported Games
 
 * The list of supported games can be found in the [types/general.ts](https://github.com/Jantero93/poker-statistics-script/blob/master/src/types/general.ts) file.
-<h2>Features</h2>
 
-Keeps track of count of played hands for each game. (list above). This includes cash and tournament games. Doesn't print games which have not been played (count 0). This value can be customized from .env file
+## Features
 
-Script tries to find localization from your system. Default value is "en-US". You can also set this in .env file
+The script keeps track of the count of played hands for each supported game, including both cash and tournament games. Games with zero counts are not printed (customizable from the .env file).
 
-**From tournaments and sit & go's this keeps track on:**
+The script attempts to detect the localization from your system, with a default value of "en-US". You can also set this in the .env file.
 
-* Total games plays
+**For tournaments and sit & go's, it tracks:**
+
+* Total games played
 * Total wins
 * Winning percentage
 * Tournament earnings
 * Paid buy-ins & re-entries
-* Shows difference between wins and buy-ins & re-entries
+* The difference between wins and buy-ins & re-entries
 * Earnings compared to costs (percentage value)
 
-**Example output of script time when readme is updated. (fi-FI) localization**
+
+**Example output of script time when readme is updated. (fi-FI) localization, minimun played hands for game is 10 to show in statistics**
 ```
 --- Played hands by game ---
-Hold'em No Limit         1 391
-Omaha Hi/Lo Limit        413
-Razz                     408
-Hold'em Limit            399
-7 Card Stud Hi/Lo        376
-7 Card Stud              373
-Triple Draw 2-7 Lowball  343
-Omaha Pot Limit          325
+Hold'em No Limit         1 607
+Hold'em Limit            488
+Omaha Hi/Lo Limit        475
+Razz                     467
+7 Card Stud              427
+7 Card Stud Hi/Lo        418
+Triple Draw 2-7 Lowball  389
+Omaha Pot Limit          366
 ------------------------------
-All played hands         4 038
+All played hands         4 647
 
 --- Tournament, sit & go statistics ---
-Total games                   17
-Total wins                    6
-Winning percentage            35,29 %
-Earned money                  684 250
-Paid buy-ins (and rebuys)     430 000
-Diff on buy-ins and winnings  254 250
-Earnings compared to costs    59,13 %
-
+Total games                   23
+Total wins                    7
+Winning percentage            30,43 %
+Earned money                  943 625
+Paid buy-ins (and rebuys)     580 000
+Diff on buy-ins and winnings  363 625
+Earnings compared to costs    62,69 %
 ```
 
-<h2>Build project</h2>
-You need Node 17 (lower version may be ok, not tested). Im not sure will this work with >= Node 20.0.6 because env is built-in.
+## Environment variables and requirements
 
-If you have installed PokerStars on default path and you have only one player account, script will try to detect automatically needed env variables if you have not set any.
-<b>Otherwise you need set folder paths AND player name manually on .env file on project root.</b>
+You need Node 17 (lower versions may be okay, not tested). The script may not work with Node >= 20.0.6 because env is built-in.
 
-Localization and showing minimun of played hands in statistics are optional.
+If you have PokerStars installed on the default path and only one player account, the script will attempt to automatically detect the necessary environment variables if none are set. Otherwise, you need to set folder paths and player name manually in the .env file on the project root.
 
-There is .env.example with instructions to show what it should look like. **If you do not provide .env file, script will try to detect these values from your operation system.**
+Localization and showing a minimum of played hands in statistics are optional.
 
-Run commands on root to install depedencies and build project
-First
-> npm install
+There is a .env.example with instructions on what it should look like. If you do not provide an .env file, the script will try to detect these values from your operating system.
 
-Then
+Example of .env file
+```bash
+# Name actual env file .env on project root
+# You must set these three (HAND_HISTORY_FOLDER_PATH, TOURN_HAND_HISTORY_FOLDER_PATH, PLAYER_NAME)
+# If you want try to script may be able to get these values automatically, build project without .env file.
+# If build fails, then you need to set .env file
+HAND_HISTORY_FOLDER_PATH="C:\Users\Windows_User\AppData\Local\PokerStars\HandHistory\Player_Name"
+TOURNAMENT_STATISTICS_FOLDER_PATH="C:\Users\Windows_User\AppData\Local\PokerStars\TournSummary\Player_Name"
+# This is needed if you give path but you have multiple accounts/player names in history folder
+PLAYER_NAME="Player-name"
 
-> npm run build
+# Optional, default value "en-US"
+# This can be removed
+LOCALIZATION="de-DE"
 
-To run statistics run command
+# Optional, don't show games played under n hands
+# By default show all games which are played even once
+# This can be removed
+MIN_GAMES_SHOW=10
+```
+## Building the project
+Run the following commands in the root to install dependencies and build the project:
 
-> npm start
+```bash
+npm install
+npm run build
+```
+To run the statistics, use the command:
 
+```bash
+npm start
+```
 or
-
-> node dist/index.js
-
-I recommend doing e.g. bash script for this. For example I got this bash script and have set it on alias:
+```bash
+node dist/index.js
 ```
+
+
+
+I recommend creating for example a bash script for this. I have the following bash script set as an alias
+```bash
 START_DIR=$(PWD)
 
 cd /C/Users/<some path>/pokerstatistics/dist
@@ -81,9 +107,14 @@ cd $START_DIR
 
 exit 0
 ```
-<h2>Bugs</h2>
-Please open issue on GitHub if you find bug. There probably are few.
-Also do that if you have problems with installation or something like that.
-<h2>Feature suggestion</h2>
-Please open issue on GitHub. I gladly hear out new suggestions.
 
+## Bugs
+
+Please [open an issue](https://github.com/Jantero93/pokerstars-statistics-script/issues) on GitHub if you find a bug. There may be a few.
+Also open an issue if you encounter problems with installation or anything else.
+
+## Feature Suggestions
+
+Please [open an issue](https://github.com/Jantero93/pokerstars-statistics-script/issues) on GitHub. I am open to new suggestions.
+
+**I'm open-minded for all kinds of discussions**

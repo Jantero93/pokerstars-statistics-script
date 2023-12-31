@@ -24,7 +24,7 @@ const executePlayHandHistory = () => {
 
 /**
  * @param folderPath Folder path where all hand history files exists
- * @returns {PokerGameRecord} Get's all played hands by game
+ * @returns {PokerGameRecord} Get all played hands by game
  */
 const readAllHandHistoryFiles = (folderPath: string): PokerGameRecord => {
   const filePathList: string[] = FileHandler.getFilePathsFromFolder(folderPath);
@@ -53,7 +53,7 @@ const getHandLinesFromFile = (filePath: string): string[] => {
 /**
  * Get's played hands from one file
  * @param handLineTexts Array of text lines containing the information of played games
- * @returns {PokerGame} Played games stats
+ * @returns {PokerGameRecord} Played games stats
  */
 const calculatePlayedHands = (handLineTexts: string[]): PokerGameRecord => {
   const playedGamesRecord = createPokerGamesNumberRecord();
@@ -112,10 +112,12 @@ const logPlayedHands = (stats: PokerGameRecord) => {
 
   /** Create logging strings by each game */
   const logStrings = Object.entries(stats)
-    .filter(([_game, gameCount]) => gameCount >= ENV.MIN_GAMES_SHOW)
-    .map(([game, gameCount]) => {
+    .filter(
+      ([_game, playedHandsCount]) => playedHandsCount >= ENV.MIN_GAMES_SHOW
+    )
+    .map(([game, playedHandsCount]) => {
       const spaces = ' '.repeat(findLongestGameName().length - game.length + 2);
-      return `${game}${spaces}${gameCount}`;
+      return `${game}${spaces}${playedHandsCount}`;
     });
 
   /** linebreak */

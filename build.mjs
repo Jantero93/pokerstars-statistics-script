@@ -12,38 +12,40 @@ const EMPTY_STRING = '';
  * @returns {void}
  */
 const execBuild = () => {
-  const isBuildSuccesful = runCompile();
-  const isEnvFileMoverSuccesful = envFileMover();
-  const isCheckScriptWorksSuccesful = checkScriptWorks();
+  const isCompileSuccesful = runCompile();
+  const isEnvFileMoveSuccesful = envFileMover();
+  const isScriptWorkingSuccesfully = checkScriptWorks();
 
-  const noErrorsBuild =
-    isBuildSuccesful &&
-    isEnvFileMoverSuccesful &&
-    isCheckScriptWorksSuccesful;
+  const buildCompleted =
+    isCompileSuccesful &&
+    isEnvFileMoveSuccesful &&
+    isScriptWorkingSuccesfully;
 
-  if (noErrorsBuild) {
-    console.info('Project builded successfully');
+  if (!buildCompleted) {
+    printGenericErrorMsg();
+    deleteDistFolder();
     return;
   }
 
-  printGenericErrorMsg();
-  deleteDistFolder();
+  console.info('Project builded successfully');
 };
 
 /**
  * Deletes dist folder if someone of build fails
- * @returns {void}
+ * @returns {boolean} Retuns true if delete is successful
  */
 const deleteDistFolder = () => {
   try {
     rimrafSync('./dist', { glob: false });
+    return true;
   } catch (error) {
     console.error(`Error on removing dist folder:\n${error}`);
+    return false;
   }
 };
 
 /**
- * Execute npm command from package.json
+ * Compiles TypeScript files to JavaScript files
  *
  * Deletes dist folder and compiles typescript files and recreates dist folder
  * @returns {boolean} True if command was executed successfully
@@ -57,7 +59,7 @@ const runCompile = () => {
 
     err && console.error(err)
 
-    return err === EMPTY_STRING;
+    return err === EMPTY_STRING && compileResult.exitCode === 0;
   } catch (error) {
     console.error(error);
     return false;
@@ -80,7 +82,7 @@ const checkScriptWorks = () => {
 
     err && console.error(err);
 
-    return err === EMPTY_STRING;
+    return err === EMPTY_STRING && result.exitCode === 0;
   } catch (error) {
     console.error(error);
     return false;
