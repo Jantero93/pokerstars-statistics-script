@@ -7,7 +7,7 @@ Simple script(s) to track history. This will use console.log to print statistics
 
 Keeps track of count of played hands for each game. (list above). This includes cash and tournament games. Doesn't print games which have not been played (count 0). This value can be customized from .env file
 
-Script tries to find localization from your system. Fallback value is "en-US". You can also set this in .env file
+Script tries to find localization from your system. Default value is "en-US". You can also set this in .env file
 
 **From tournaments and sit & go's this keeps track on:**
 

@@ -21,7 +21,7 @@ export type TournamentStats = {
 };
 
 /**
- * @returns Initializes general tournament and sit & go statistics object
+ * @returns {TournamentStats} Initializes general tournament and sit & go statistics object
  */
 export const createTournamentStatsObject = (): TournamentStats => ({
   buyIns: 0,

@@ -1,4 +1,4 @@
-import ENV from './utils/env/index';
+import ENV from './utils/env/main';
 import logger from './utils/logger';
 import FileHandler from './utils/filereader';
 import {
@@ -14,11 +14,18 @@ import {
  */
 const unknownHandsList: string[] = [];
 
+/**
+ * Entry point to run statistics of played hands by game
+ */
 const executePlayHandHistory = () => {
   const stats = readAllHandHistoryFiles(ENV.HAND_HISTORY_FOLDER_PATH);
   logPlayedHands(stats);
 };
 
+/**
+ * @param folderPath Folder path where all hand history files exists
+ * @returns {PokerGameRecord} Get's all played hands by game
+ */
 const readAllHandHistoryFiles = (folderPath: string): PokerGameRecord => {
   const filePathList: string[] = FileHandler.getFilePathsFromFolder(folderPath);
   const handLinesEachFile: string[][] = filePathList.map(getHandLinesFromFile);
@@ -30,6 +37,10 @@ const readAllHandHistoryFiles = (folderPath: string): PokerGameRecord => {
   return data;
 };
 
+/**
+ * @param filePath File path where to read the content
+ * @returns {string[]} Array of lines. Redudant lines are filtered
+ */
 const getHandLinesFromFile = (filePath: string): string[] => {
   const headerText = 'PokerStars Hand #';
 
@@ -39,6 +50,11 @@ const getHandLinesFromFile = (filePath: string): string[] => {
   return headerLines;
 };
 
+/**
+ * Get's played hands from one file
+ * @param handLineTexts Array of text lines containing the information of played games
+ * @returns {PokerGame} Played games stats
+ */
 const calculatePlayedHands = (handLineTexts: string[]): PokerGameRecord => {
   const playedGamesRecord = createPokerGamesNumberRecord();
   const knownGames = createKnownGamesList();
@@ -59,6 +75,11 @@ const calculatePlayedHands = (handLineTexts: string[]): PokerGameRecord => {
   return playedGamesRecord;
 };
 
+/**
+ * Combines all records from all files. Sorts game by played hands descending
+ * @param fileRecords All calculated played hand records from each file
+ * @returns Full statistics
+ */
 const combineFileRecords = (
   fileRecords: PokerGameRecord[]
 ): PokerGameRecord => {
@@ -79,6 +100,10 @@ const combineFileRecords = (
   return sortGamesDescByCount;
 };
 
+/**
+ * Generally logs played hands and other information
+ * @param stats Full played hand statistics
+ */
 const logPlayedHands = (stats: PokerGameRecord) => {
   const allPlayedHandsCount = Object.values(stats).reduce(
     (sum, count) => sum + count,

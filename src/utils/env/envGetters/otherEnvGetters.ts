@@ -1,7 +1,7 @@
 import getUserLocale from 'get-user-locale';
 
 /**
- * Gets MIN_GAMES_SHOW from .env file
+ * Gets MIN_GAMES_SHOW from .env file if set
  * @returns {number} Minimun amount of games to show in statistics. Default 1
  */
 export const getMinimunPlaysToShowEnv = (): number =>
@@ -10,8 +10,7 @@ export const getMinimunPlaysToShowEnv = (): number =>
 /**
  * First check .env file, then try to get from system
  *
- * Fallback value is 'en-US'
- * @returns {string} Gets localization, fallback value is 'en-US'
+ * @returns {string} Gets localization, default value is 'en-US'
  */
 export const getLocalizationEnv = (): string =>
   process.env['LOCALIZATION'] ??

@@ -97,4 +97,5 @@ const printGenericErrorMsg = () => {
   If you still have issues with building and running project, please open issue at ${ISSUE_LINK}`);
 };
 
+// Execute compile
 await execBuild();

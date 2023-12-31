@@ -1,4 +1,4 @@
-import ENV from './utils/env/index';
+import ENV from './utils/env/main';
 import logger, { ConsoleColor, LogInput } from './utils/logger';
 import FileHandler from './utils/filereader';
 import {
@@ -6,19 +6,34 @@ import {
   createTournamentStatsObject
 } from './types/tournament';
 
+/**
+ * Main entry point for executing tournament statistics
+ */
 const executeTournamentHistory = () => {
   const stats = getTournamentStats(ENV.TOURNAMENT_STATISTICS_FOLDER_PATH);
   logStatistics(stats);
 };
 
+/**
+ * Gets and calculates all tournament statistics
+ * @param folderPath Folder path where all tournament statistics files exists
+ * @returns {TournamentStats} Full tournament statistics
+ */
 const getTournamentStats = (folderPath: string): TournamentStats => {
-  const tournamentFilePaths = FileHandler.getFilePathsFromFolder(folderPath);
-  const tournamentRawDataFileList = tournamentFilePaths.map(calcStatsFromFile);
-  const totalStats = calculateTotalStats(tournamentRawDataFileList);
+  const tournamentFilePaths: string[] =
+    FileHandler.getFilePathsFromFolder(folderPath);
 
-  return totalStats;
+  const tournamentRawDataFileList: TournamentStats[] =
+    tournamentFilePaths.map(calcStatsFromFile);
+
+  return calculateTotalStats(tournamentRawDataFileList);
 };
 
+/**
+ * Reads tournament statistics from a single file
+ * @param filePath Absolute file path to
+ * @returns {TournamentStats} Tournament statistics for one file
+ */
 const calcStatsFromFile = (filePath: string): TournamentStats => {
   const lines = FileHandler.getContentLinesFromFile(filePath);
 
@@ -30,6 +45,11 @@ const calcStatsFromFile = (filePath: string): TournamentStats => {
   };
 };
 
+/**
+ * Combines each files tournament statistics as one record
+ * @param recordList List of each file's tournament stats
+ * @returns {TournamentStats} Full tournament statistics
+ */
 const calculateTotalStats = (recordList: TournamentStats[]): TournamentStats =>
   recordList.reduce(
     (acc, current) => ({
@@ -42,6 +62,10 @@ const calculateTotalStats = (recordList: TournamentStats[]): TournamentStats =>
     createTournamentStatsObject()
   );
 
+/**
+ * Calculates additional data and generally logs the results
+ * @param stats Full tournament statistics
+ */
 const logStatistics = (stats: TournamentStats) => {
   const { earnings: wins, buyIns, tournamentCount, tournamentWins } = stats;
   const winBuyInsDiff = wins - buyIns;
@@ -68,6 +92,13 @@ const logStatistics = (stats: TournamentStats) => {
     return Math.max(...labels.map((label) => label.length));
   };
 
+  /**
+   * Log helper to align vertically numbers
+   * @param label Header
+   * @param value Number value
+   * @param color Color output to terminal, optional.
+   * Fallback value is default terminal color
+   */
   const alignConsoleLog = (
     label: string,
     value: LogInput,
@@ -155,7 +186,6 @@ const calcEarningComparedToCosts = (
 };
 
 /**
- *
  * @param value Number input
  * @returns "red" if value is under 0, otherwise "green"
  */

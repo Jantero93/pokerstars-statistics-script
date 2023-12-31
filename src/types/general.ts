@@ -1,5 +1,5 @@
 /**
- * General
+ * Poker games script can detect
  */
 export type PokerGame =
   | '7 Card Stud Hi/Lo'
@@ -15,7 +15,7 @@ export type PokerGame =
   | 'Omaha No Limit';
 
 /**
- * @returns Create array of strings known poker games
+ * @returns {PokerGame[]} Create array of strings known poker games
  */
 export const createKnownGamesList = (): PokerGame[] => [
   '7 Card Stud Hi/Lo',
@@ -31,7 +31,10 @@ export const createKnownGamesList = (): PokerGame[] => [
   'Omaha No Limit'
 ];
 
-export const findLongestGameName = () =>
+/**
+ * @returns {string} Find longest string of known games
+ */
+export const findLongestGameName = (): string =>
   createKnownGamesList().reduce(
     (longest, current) => (current.length > longest.length ? current : longest),
     ''
@@ -40,7 +43,7 @@ export const findLongestGameName = () =>
 export type PokerGameRecord = Record<PokerGame | 'UNKNOWN', number>;
 
 /**
- * @returns Initialize record of pokergame and number
+ * @returns {PokerGameRecord} Initialize record of pokergame and number
  */
 export const createPokerGamesNumberRecord = (): PokerGameRecord => ({
   '7 Card Stud Hi/Lo': 0,
@@ -52,7 +55,7 @@ export const createPokerGamesNumberRecord = (): PokerGameRecord => ({
   'Triple Draw 2-7 Lowball': 0,
   'Omaha Pot Limit': 0,
   Razz: 0,
-  UNKNOWN: 0,
   '5 Card Draw No Limit': 0,
-  'Omaha No Limit': 0
+  'Omaha No Limit': 0,
+  UNKNOWN: 0
 });
