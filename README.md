@@ -47,7 +47,7 @@ Earnings compared to costs    59,13 %
 <h2>Build project</h2>
 You need Node 17 (lower version may be ok, not tested). Im not sure will this work with >= Node 20.0.6 because env is built-in.
 
-If you have installed PokerStars on default path and you have only one player account, script will try to detect automatically needed env variables.
+If you have installed PokerStars on default path and you have only one player account, script will try to detect automatically needed env variables if you have not set any.
 <b>Otherwise you need set folder paths AND player name manually on .env file on project root.</b>
 
 Localization and showing minimun of played hands in statistics are optional.

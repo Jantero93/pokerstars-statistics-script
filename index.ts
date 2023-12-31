@@ -1,22 +1,36 @@
 // Statistics modules
 import ExecHandHistory from './src/playhandHistory';
 import ExecTournamentHistory from './src/tournamentHistory';
-import { issueLink } from './src/utils/consts';
 
-const exec = () => {
+/**
+ * Temporarily disables logging for building phase
+ * build.mjs more information
+ */
+const disableLoggingForBuildPhase = () => {
+  const shouldLog = process.env.DISPLAY_LOGS !== 'false';
+  const originalLog = console.log;
+  console.log = (...args) => {
+    if (shouldLog) {
+      originalLog.call(console, ...args);
+    }
+  };
+};
+
+const exec = (): number => {
+  disableLoggingForBuildPhase();
+
   try {
     ExecHandHistory();
     ExecTournamentHistory();
+    return 0;
   } catch (e) {
-    const errMsg = (e as Error).message;
-    console.error(`Error on executing scripts, error message:\n${errMsg}`);
-    console.info(`\nPlease if error relates to environment variables do these steps:
-
-    1: Try building project without .env file on project's root folder and then execute script
-    2: Set .env file on project's root folder and build project. There is .env.example for correct formatting
-    If you still have issues with building and running project, please open issue at ${issueLink}`);
+    console.error(`Error on executing scripts, error message:
+    ${(e as Error).message}`);
+    return 1;
   }
 };
 
 // Main entry point to execute script
 exec();
+
+export default exec;
