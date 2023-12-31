@@ -1,36 +1,33 @@
-// Statistics modules
 import ExecHandHistory from './src/playhandHistory';
 import ExecTournamentHistory from './src/tournamentHistory';
 
-/**
- * Temporarily disables logging for building phase
- * build.mjs more information
- */
 const disableLoggingForBuildPhase = () => {
-  const shouldLog = process.env.DISPLAY_LOGS !== 'false';
-  const originalLog = console.log;
-  console.log = (...args) => {
-    if (shouldLog) {
-      originalLog.call(console, ...args);
-    }
-  };
+  /**
+   * HIDE_LOGGING is undefined. It is only set true on building phase when script is tested
+   * When script is executed later HIDE_LOGGING is not set. More information on build.mjs file on
+   * project root
+   */
+  const hideLogging = process.env.HIDE_LOGGING === 'true';
+  if (hideLogging) {
+    console.log = () => undefined;
+  }
 };
 
-const exec = (): number => {
+/**
+ * Main entry point for executing statistics scripts
+ */
+const exec = () => {
   disableLoggingForBuildPhase();
 
   try {
     ExecHandHistory();
     ExecTournamentHistory();
-    return 0;
   } catch (e) {
-    console.error(`Error on executing scripts, error message:
-    ${(e as Error).message}`);
-    return 1;
+    console.error(
+      `Error on executing scripts, error message:
+      ${e instanceof Error ? e.message : e}`
+    );
   }
 };
 
-// Main entry point to execute script
 exec();
-
-export default exec;

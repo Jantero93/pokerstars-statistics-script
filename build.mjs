@@ -1,26 +1,25 @@
 'use strict';
-import { execa } from 'execa';
-import { rimraf } from 'rimraf';
+import { execaSync } from 'execa';
+import { rimrafSync } from 'rimraf';
 import envFileMover from './copy-env.mjs';
 
 const ISSUE_LINK = `https://github.com/Jantero93/poker-statistics-script/issues`;
 
-/**
- * Main entry point for building project
- * @returns {Promise<void>}
- */
-const execBuild = async () => {
-  // Disable logging from main scripts for building phase
-  process.env.DISPLAY_LOGS = 'false';
+const EMPTY_STRING = '';
 
-  const isBuildSuccesfull = await runBuild();
-  const isEnvFileMoverSuccesfull = envFileMover();
-  const isCheckScriptWorksSuccesfull = await checkScriptWorks();
+/**
+ * Entry point for building project
+ * @returns {void}
+ */
+const execBuild = () => {
+  const isBuildSuccesful = runCompile();
+  const isEnvFileMoverSuccesful = envFileMover();
+  const isCheckScriptWorksSuccesful = checkScriptWorks();
 
   const noErrorsBuild =
-    isBuildSuccesfull &&
-    isEnvFileMoverSuccesfull &&
-    isCheckScriptWorksSuccesfull;
+    isBuildSuccesful &&
+    isEnvFileMoverSuccesful &&
+    isCheckScriptWorksSuccesful;
 
   if (noErrorsBuild) {
     console.info('Project builded successfully');
@@ -28,23 +27,37 @@ const execBuild = async () => {
   }
 
   printGenericErrorMsg();
-  doCleanUp();
+  deleteDistFolder();
+};
+
+/**
+ * Deletes dist folder if someone of build fails
+ * @returns {void}
+ */
+const deleteDistFolder = () => {
+  try {
+    rimrafSync('./dist', { glob: false });
+  } catch (error) {
+    console.error(`Error on removing dist folder:\n${error}`);
+  }
 };
 
 /**
  * Execute npm command from package.json
  *
  * Deletes dist folder and compiles typescript files and recreates dist folder
- * @returns {Promise<boolean>} True if command was executed successfully
+ * @returns {boolean} True if command was executed successfully
  */
-const runBuild = async () => {
+const runCompile = () => {
   try {
-    const buildResult = await execa('npm', ['run', 'compile']);
-    const err = buildResult.stderr;
+    deleteDistFolder();
 
-    logPossibleError(err);
+    const compileResult = execaSync('tsc', []);
+    const err = compileResult.stderr;
 
-    return err === '';
+    err && console.error(err)
+
+    return err === EMPTY_STRING;
   } catch (error) {
     console.error(error);
     return false;
@@ -53,35 +66,26 @@ const runBuild = async () => {
 
 /**
  * Runs normal statistics script(s) without any logging
- * @returns {Promise<boolean>} Return true if scripts runs without any throwable error
+ * @returns {boolean} Return true if scripts runs without any throwable error
  */
-const checkScriptWorks = async () => {
+const checkScriptWorks = () => {
+  /**  Disable logging from main scripts for building phase
+   This is connected in entry point of script (index.ts) */
+  process.env.HIDE_LOGGING = 'true';
+
   try {
-    const result = await execa('npm', ['start']);
+    // Check will normal script execution throw any error
+    const result = execaSync('node', ['dist/index.js']);
     const err = result.stderr;
 
-    logPossibleError(err);
+    err && console.error(err);
 
-    return err === '';
+    return err === EMPTY_STRING;
   } catch (error) {
     console.error(error);
     return false;
   }
 };
-
-/**
- * Deletes dist folder if someone of build fails
- * @returns {Promise<void>}
- */
-const doCleanUp = async () =>
-  await rimraf('./dist', { glob: false }, (error) => {
-    if (error) {
-      console.error(`Error on removing dist folder:
-      ${error}`);
-    }
-  });
-
-const logPossibleError = (e) => e && console.error(e);
 
 /**
  * Generic console log output if build fails
@@ -97,5 +101,5 @@ const printGenericErrorMsg = () => {
   If you still have issues with building and running project, please open issue at ${ISSUE_LINK}`);
 };
 
-// Execute compile
-await execBuild();
+// Execute compile & build
+execBuild();

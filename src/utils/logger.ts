@@ -43,11 +43,12 @@ const localizeNumberToString = (value: number) =>
   value.toLocaleString(localization);
 
 /**
- * Checks input contains integer
- * @param input String variable
- * @returns True if contains integer
+ * Checks if the input string contains a number (integer or decimal).
+ * @param {string} input The input string to check.
+ * @returns {boolean} True if the input contains a number, false otherwise.
  */
-const inputContainsNumber = (input: string) => /\d/.test(input);
+const inputContainsNumber = (input: string): boolean =>
+  /\d+(\.\d+)?/.test(input);
 
 /**
  * Localizes number in string input. Number may be integer or decimal.

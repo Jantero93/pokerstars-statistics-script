@@ -67,15 +67,14 @@ const calculateTotalStats = (recordList: TournamentStats[]): TournamentStats =>
  * @param stats Full tournament statistics
  */
 const logStatistics = (stats: TournamentStats) => {
-  const { earnings: wins, buyIns, tournamentCount, tournamentWins } = stats;
-  const winBuyInsDiff = wins - buyIns;
+  const { earnings, buyIns, tournamentCount, tournamentWins } = stats;
+  const winBuyInsDiff = earnings - buyIns;
   const winPercentageString = `${calcTournamentWinPercentage(stats).toFixed(
     2
   )} %`;
-  const earningsComparedCosts = calcEarningComparedToCosts(buyIns, wins);
+  const earningsComparedCosts = calcEarningComparedToCosts(buyIns, earnings);
   const earningComparedLogColor = getEarningLogColor(earningsComparedCosts);
   const earningsComparePercentage = `${earningsComparedCosts.toFixed(2)} %`;
-
   const diffTextColor = getEarningLogColor(winBuyInsDiff);
 
   const getMaxLabelLength = () => {
@@ -114,7 +113,7 @@ const logStatistics = (stats: TournamentStats) => {
   alignConsoleLog('Total games', tournamentCount);
   alignConsoleLog('Total wins', tournamentWins);
   alignConsoleLog('Winning percentage', winPercentageString);
-  alignConsoleLog('Earned money', wins);
+  alignConsoleLog('Earned money', earnings);
   alignConsoleLog('Paid buy-ins (and rebuys)', buyIns);
   alignConsoleLog('Diff on buy-ins and winnings', winBuyInsDiff, diffTextColor);
   alignConsoleLog(
@@ -141,15 +140,13 @@ const calcWinSum = (lines: string[]): number => {
 };
 
 const calcBuyIn = (lines: string[]): number => {
-  const lineBuyIn = lines
-    .find((line) => line.includes('Buy-In'))
-    ?.split(':')[1];
+  const buyInRaw = lines.find((line) => line.includes('Buy-In'))?.split(':')[1];
 
-  if (!lineBuyIn) {
+  if (!buyInRaw) {
     throw new Error('Could not find buy-in for tournament');
   }
 
-  const [buyIn, rake] = lineBuyIn.split('/').map(Number);
+  const [buyIn, rake] = buyInRaw.split('/').map(Number);
   return buyIn + rake;
 };
 
@@ -190,6 +187,6 @@ const calcEarningComparedToCosts = (
  * @returns "red" if value is under 0, otherwise "green"
  */
 const getEarningLogColor = (value: number): 'red' | 'green' =>
-  value <= 0 ? 'red' : 'green';
+  value < 0 ? 'red' : 'green';
 
 export default executeTournamentHistory;

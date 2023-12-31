@@ -73,8 +73,8 @@ const getPlayerNameFromhandhistoryFolder = (
     }
 
     return playerFolder ?? null;
-  } catch (e) {
-    const errorMsg = (e as Error).message;
+  } catch (err) {
+    const errorMsg = err instanceof Error ? err.message : err;
     console.error('Generic error on getting envs automatically:');
     console.error(errorMsg);
     return null;
