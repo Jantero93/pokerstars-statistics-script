@@ -73,9 +73,7 @@ const logStatistics = (stats: TournamentStats) => {
     2
   )} %`;
   const earningsComparedCosts = calcEarningComparedToCosts(buyIns, earnings);
-  const earningComparedLogColor = getEarningLogColor(earningsComparedCosts);
   const earningsComparePercentage = `${earningsComparedCosts.toFixed(2)} %`;
-  const diffTextColor = getEarningLogColor(winBuyInsDiff);
 
   const getMaxLabelLength = () => {
     const labels = [
@@ -115,11 +113,11 @@ const logStatistics = (stats: TournamentStats) => {
   alignConsoleLog('Winning percentage', winPercentageString);
   alignConsoleLog('Earned money', earnings);
   alignConsoleLog('Paid buy-ins (and rebuys)', buyIns);
-  alignConsoleLog('Diff on buy-ins and winnings', winBuyInsDiff, diffTextColor);
+  alignConsoleLog('Diff on buy-ins and winnings', winBuyInsDiff, 'cyan');
   alignConsoleLog(
     'Earnings compared to costs',
     earningsComparePercentage,
-    earningComparedLogColor
+    'cyan'
   );
 };
 
@@ -181,12 +179,5 @@ const calcEarningComparedToCosts = (
 
   return ((earnings - costs) / costs) * 100;
 };
-
-/**
- * @param value Number input
- * @returns "red" if value is under 0, otherwise "green"
- */
-const getEarningLogColor = (value: number): 'red' | 'green' =>
-  value < 0 ? 'red' : 'green';
 
 export default executeTournamentHistory;
