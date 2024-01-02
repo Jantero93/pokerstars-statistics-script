@@ -1,5 +1,5 @@
-import ExecHandHistory from './src/playhandHistory';
-import ExecTournamentHistory from './src/tournamentHistory';
+import ExecHandHistory from './src/playedhandhistory/playhandHistory';
+import ExecTournamentHistory from './src/tournamentStatistics/mainCalculation';
 
 const disableLoggingForBuildPhase = () => {
   /**

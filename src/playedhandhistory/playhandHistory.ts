@@ -1,13 +1,14 @@
-import ENV from './utils/env/main';
-import logger from './utils/logger';
-import FileHandler from './utils/filereader';
+import ENV from '../utils/env/main';
+import logger from '../utils/logger';
+import FileHandler from '../utils/filereader';
 import {
   PokerGame,
   PokerGameRecord,
   createKnownGamesList,
   createPokerGamesNumberRecord,
   findLongestGameName
-} from './types/general';
+} from '../types/general';
+import { localizeNumber } from '../utils/stringUtils';
 
 /**
  * Array of unrecognized hands
@@ -117,7 +118,7 @@ const logPlayedHands = (stats: PokerGameRecord) => {
     )
     .map(([game, playedHandsCount]) => {
       const spaces = ' '.repeat(findLongestGameName().length - game.length + 2);
-      return `${game}${spaces}${playedHandsCount}`;
+      return `${game}${spaces}${localizeNumber(playedHandsCount)}`;
     });
 
   /** linebreak */
@@ -133,7 +134,9 @@ const logPlayedHands = (stats: PokerGameRecord) => {
   const headerSpaces = ' '.repeat(
     findLongestGameName().length - allPlayedHeader.length + 2
   );
-  const allPlayedString = `${allPlayedHeader}${headerSpaces}${allPlayedHandsCount}`;
+  const allPlayedString = `${allPlayedHeader}${headerSpaces}${localizeNumber(
+    allPlayedHandsCount
+  )}`;
 
   /** Log everything */
   logger('--- Played hands by game ---', 'magenta');

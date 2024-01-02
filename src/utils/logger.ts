@@ -1,4 +1,3 @@
-import ENV from './env/main';
 export type ConsoleColor =
   | 'reset'
   | 'bright'
@@ -36,32 +35,6 @@ const colorCodes: Record<ConsoleColor, number> = {
   white: 37
 };
 
-// Get localization of environment
-const localization = ENV.LOCALIZATION;
-
-const localizeNumberToString = (value: number) =>
-  value.toLocaleString(localization);
-
-/**
- * Checks if the input string contains a number (integer or decimal).
- * @param {string} input The input string to check.
- * @returns {boolean} True if the input contains a number, false otherwise.
- */
-const inputContainsNumber = (input: string): boolean =>
-  /\d+(\.\d+)?/.test(input);
-
-/**
- * Localizes number in string input. Number may be integer or decimal.
- * @param input String input
- * @returns String as it is but number localised
- * @example const localized = localizeStringWithNumber('The number is 2000.35')
- * console.log(localized) // "The number is 2 000,35" (fi-FI)
- */
-const localizeStringWithNumber = (input: string) =>
-  input.replace(/(\d+(\.\d+)?)/g, (match) =>
-    Number(match).toLocaleString(localization)
-  );
-
 /**
  * Custom logger. Colors works at least on bash, powershell, cmd
  *
@@ -70,19 +43,10 @@ const localizeStringWithNumber = (input: string) =>
  * @param color Color of console input
  */
 const logger = (input: LogInput, color?: ConsoleColor | undefined) => {
-  if (typeof input === 'string' && inputContainsNumber(input)) {
-    input = localizeStringWithNumber(input);
-  }
-
-  if (typeof input === 'number') {
-    input = localizeNumberToString(input);
-  }
-
   if (!color) {
     console.log(input);
     return;
   }
-
   console.log(`\x1b[${colorCodes[color]}m${input}\x1b[0m`);
 };
 
