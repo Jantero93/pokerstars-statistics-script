@@ -9,6 +9,8 @@ import {
   findLongestGameName
 } from '../types/general';
 import { localizeNumber } from '../utils/stringUtils';
+import { calcAllHandsPlayed } from './calcUtils';
+import { createLinebreak, createLoggingOutput } from './loggingUtils';
 
 /**
  * Array of unrecognized hands
@@ -106,28 +108,12 @@ const combineFileRecords = (
  * @param stats Full played hand statistics
  */
 const logPlayedHands = (stats: PokerGameRecord) => {
-  const allPlayedHandsCount = Object.values(stats).reduce(
-    (sum, count) => sum + count,
-    0
-  );
+  const allPlayedHandsCount = calcAllHandsPlayed(stats);
 
   /** Create logging strings by each game */
-  const logStrings = Object.entries(stats)
-    .filter(
-      ([_game, playedHandsCount]) => playedHandsCount >= ENV.MIN_GAMES_SHOW
-    )
-    .map(([game, playedHandsCount]) => {
-      const spaces = ' '.repeat(findLongestGameName().length - game.length + 2);
-      return `${game}${spaces}${localizeNumber(playedHandsCount)}`;
-    });
-
-  /** linebreak */
-  const character = '-';
-  const longestLogStringLenght = logStrings.reduce(
-    (maxLength, currentString) => Math.max(maxLength, currentString.length),
-    0
-  );
-  const linebreak = character.repeat(longestLogStringLenght + character.length);
+  const logStrings = createLoggingOutput(stats);
+  /** Create linebreak based on longest output string */
+  const linebreak = createLinebreak(logStrings);
 
   /** Get total sum of played hands strings */
   const allPlayedHeader = 'All played hands';

@@ -6,18 +6,10 @@ import logger, { ConsoleColor } from '../utils/logger';
  */
 export const getMaxLabelLength = (
   labelsData: Record<string, { value: string | number }>
-): number => Math.max(...Object.keys(labelsData).map((label) => label.length));
-
-/**
- * Get label spacing for aligning console log
- * @param label Label for which to calculate spacing
- * @returns Empty spacing depending on label length output so logging is vertically aligned
- */
-export const getLabelSpacing = (
-  label: string,
-  labelsData: Record<string, { value: string | number }>
-): string =>
-  ' '.repeat(Math.max(0, getMaxLabelLength(labelsData) - label.length + 2));
+): number => {
+  const labels = Object.keys(labelsData).map((label) => label.length);
+  return Math.max(...labels);
+};
 
 /**
  * Log helper to align vertically numbers
@@ -30,4 +22,9 @@ export const logWithSpacing = (
   value: string | number,
   labelsData: Record<string, { value: string | number }>,
   color?: ConsoleColor
-) => logger(label + getLabelSpacing(label, labelsData) + value, color);
+): void => {
+  const labelSpacing = ' '.repeat(
+    Math.max(0, getMaxLabelLength(labelsData) - label.length + 2)
+  );
+  return logger(label + labelSpacing + value, color);
+};
