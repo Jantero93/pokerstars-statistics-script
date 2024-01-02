@@ -69,7 +69,7 @@ const localizeStringWithNumber = (input: string) =>
  * @param input String, number, array
  * @param color Color of console input
  */
-const logger = (input: LogInput, color?: ConsoleColor) => {
+const logger = (input: LogInput, color?: ConsoleColor | undefined) => {
   if (typeof input === 'string' && inputContainsNumber(input)) {
     input = localizeStringWithNumber(input);
   }

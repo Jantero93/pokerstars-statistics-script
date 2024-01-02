@@ -16,7 +16,7 @@ const executeTournamentHistory = () => {
 
 /**
  * Gets and calculates all tournament statistics
- * @param folderPath Folder path where all tournament statistics files exists
+ * @param folderPath Folder path where all tournament statistics files exist
  * @returns {TournamentStats} Full tournament statistics
  */
 const getTournamentStats = (folderPath: string): TournamentStats => {
@@ -31,7 +31,7 @@ const getTournamentStats = (folderPath: string): TournamentStats => {
 
 /**
  * Reads tournament statistics from a single file
- * @param filePath Absolute file path to
+ * @param filePath Absolute file path
  * @returns {TournamentStats} Tournament statistics for one file
  */
 const calcStatsFromFile = (filePath: string): TournamentStats => {
@@ -46,7 +46,7 @@ const calcStatsFromFile = (filePath: string): TournamentStats => {
 };
 
 /**
- * Combines each files tournament statistics as one record
+ * Combines each file's tournament statistics as one record
  * @param recordList List of each file's tournament stats
  * @returns {TournamentStats} Full tournament statistics
  */
@@ -75,50 +75,57 @@ const logStatistics = (stats: TournamentStats) => {
   const earningsComparedCosts = calcEarningComparedToCosts(buyIns, earnings);
   const earningsComparePercentage = `${earningsComparedCosts.toFixed(2)} %`;
 
-  const getMaxLabelLength = () => {
-    const labels = [
-      'Total games',
-      'Total wins',
-      'Winning percentage',
-      'Earned money',
-      'Paid buy-ins (and rebuys)',
-      'Diff on buy-ins and winnings',
-      'Earnings compared to costs'
-    ];
-
-    return Math.max(...labels.map((label) => label.length));
+  type LoggingOutput = Record<
+    string,
+    { value: string | number; color?: ConsoleColor }
+  >;
+  const labelsData: LoggingOutput = {
+    'Total games': { value: tournamentCount },
+    'Total wins': { value: tournamentWins },
+    'Winning percentage': { value: winPercentageString },
+    'Earned money': { value: earnings },
+    'Paid buy-ins (and rebuys)': { value: buyIns },
+    'Diff on buy-ins and winnings': { value: winBuyInsDiff, color: 'cyan' },
+    'Earnings compared to costs': {
+      value: earningsComparePercentage,
+      color: 'cyan'
+    }
   };
+
+  /**
+   * Returns the longest string header length (number)
+   */
+  const getMaxLabelLength = (): number =>
+    Math.max(...Object.keys(labelsData).map((label) => label.length));
+
+  /**
+   * Get label spacing for aligning console log
+   * @param label Label for which to calculate spacing
+   * @returns Empty spacing depending on output
+   * so logging is vertically aligned
+   */
+  const getLabelSpacing = (label: string): string =>
+    ' '.repeat(Math.max(0, getMaxLabelLength() - label.length + 2));
 
   /**
    * Log helper to align vertically numbers
    * @param label Header
    * @param value Number value
-   * @param color Color output to terminal, optional.
-   * Fallback value is default terminal color
+   * @param color Color output to the terminal, optional.
+   * Fallback value is the default terminal color
    */
-  const alignConsoleLog = (
+  const logWithSpacing = (
     label: string,
     value: LogInput,
     color?: ConsoleColor
   ) => {
-    const labelSpacing = ' '.repeat(
-      Math.max(0, getMaxLabelLength() - label.length + 2)
-    );
-    logger(`${label}${labelSpacing}${value}`, color);
+    logger(label + getLabelSpacing(label) + value, color);
   };
 
   logger('\n--- Tournament, sit & go statistics ---', 'magenta');
-  alignConsoleLog('Total games', tournamentCount);
-  alignConsoleLog('Total wins', tournamentWins);
-  alignConsoleLog('Winning percentage', winPercentageString);
-  alignConsoleLog('Earned money', earnings);
-  alignConsoleLog('Paid buy-ins (and rebuys)', buyIns);
-  alignConsoleLog('Diff on buy-ins and winnings', winBuyInsDiff, 'cyan');
-  alignConsoleLog(
-    'Earnings compared to costs',
-    earningsComparePercentage,
-    'cyan'
-  );
+  Object.keys(labelsData).forEach((label) => {
+    logWithSpacing(label, labelsData[label].value, labelsData[label].color);
+  });
 };
 
 /**
@@ -141,7 +148,8 @@ const calcBuyIn = (lines: string[]): number => {
   const buyInRaw = lines.find((line) => line.includes('Buy-In'))?.split(':')[1];
 
   if (!buyInRaw) {
-    throw new Error('Could not find buy-in for tournament');
+    throw new Error(`Could not find buy-in for the tournament, lines:\n
+    ${lines}`);
   }
 
   const [buyIn, rake] = buyInRaw.split('/').map(Number);
