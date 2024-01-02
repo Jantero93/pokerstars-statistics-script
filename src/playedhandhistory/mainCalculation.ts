@@ -89,9 +89,8 @@ const combineFileRecords = (
   // Sum all file records as one
   const singleRecord = fileRecords.reduce((result, record) => {
     Object.keys(record).forEach((key) => {
-      result[key as PokerGame | 'UNKNOWN'] =
-        (result[key as PokerGame | 'UNKNOWN'] || 0) +
-        record[key as PokerGame | 'UNKNOWN'];
+      result[key as PokerGame] =
+        (result[key as PokerGame] || 0) + record[key as PokerGame];
     });
     return result;
   }, createPokerGamesNumberRecord());

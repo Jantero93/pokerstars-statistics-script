@@ -78,12 +78,18 @@ const calculateTotalStats = (recordList: TournamentStats[]): TournamentStats =>
  */
 const logStatistics = (stats: TournamentStats) => {
   const { earnings, buyIns, tournamentCount, tournamentWins } = stats;
+
+  // Calculate summary stats
   const winBuyInsDiff = earnings - buyIns;
-  const winPercentageString = `${calcTournamentWinPercentage(stats).toFixed(
+
+  const winPercentage = calcTournamentWinPercentage(stats);
+  const winPercentageString = `${localizeNumber(winPercentage, 2)} %`;
+
+  const earningsComparedCosts = calcEarningComparedToCosts(buyIns, earnings);
+  const earningsComparePercentage = `${localizeNumber(
+    earningsComparedCosts,
     2
   )} %`;
-  const earningsComparedCosts = calcEarningComparedToCosts(buyIns, earnings);
-  const earningsComparePercentage = `${earningsComparedCosts.toFixed(2)} %`;
 
   type LoggingOutput = Record<
     string,

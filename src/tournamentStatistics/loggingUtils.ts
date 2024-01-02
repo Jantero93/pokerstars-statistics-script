@@ -1,3 +1,4 @@
+import ENV from '../utils/env/main';
 import logger, { ConsoleColor } from '../utils/logger';
 
 /**
@@ -26,5 +27,9 @@ export const logWithSpacing = (
   const labelSpacing = ' '.repeat(
     Math.max(0, getMaxLabelLength(labelsData) - label.length + 2)
   );
-  return logger(label + labelSpacing + value, color);
+
+  return logger(
+    label + labelSpacing + value.toLocaleString(ENV.LOCALIZATION),
+    color
+  );
 };
