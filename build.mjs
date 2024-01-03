@@ -1,11 +1,7 @@
-'use strict';
 import { execaSync } from 'execa';
 import { rimrafSync } from 'rimraf';
-import envFileMover from './copy-env.mjs';
-
-const ISSUE_LINK = `https://github.com/Jantero93/poker-statistics-script/issues`;
-
-const EMPTY_STRING = '';
+import runEnvFileMover from './copy-env.mjs';
+import { EMPTY_STRING, ISSUE_LINK } from './globalConsts.js'
 
 /**
  * Entry point for building project
@@ -13,12 +9,12 @@ const EMPTY_STRING = '';
  */
 const execBuild = () => {
   const isCompileSuccesful = runCompile();
-  const isEnvFileMoveSuccesful = envFileMover();
-  const isScriptWorkingSuccesfully = checkScriptWorks();
+  const isEnvFileMovedSuccesful = runEnvFileMover();
+  const isScriptWorkingSuccesfully = runCheckScriptWorks();
 
   const buildCompleted =
     isCompileSuccesful &&
-    isEnvFileMoveSuccesful &&
+    isEnvFileMovedSuccesful &&
     isScriptWorkingSuccesfully;
 
   if (!buildCompleted) {
@@ -70,7 +66,7 @@ const runCompile = () => {
  * Runs normal statistics script(s) without any logging
  * @returns {boolean} Return true if scripts runs without any throwable error
  */
-const checkScriptWorks = () => {
+const runCheckScriptWorks = () => {
   /**  Disable logging from main scripts for building phase
    This is connected in entry point of script (index.ts) */
   process.env.HIDE_LOGGING = 'true';

@@ -1,5 +1,10 @@
 /**
- * All environment variables typed
+ * @type {Env}
+ * @property {string} HAND_HISTORY_FOLDER_PATH - The path to the hand history folder
+ * @property {string} TOURNAMENT_STATISTICS_FOLDER_PATH - The path to the tournament statistics folder
+ * @property {string} PLAYER_NAME - The name of the player/account
+ * @property {string} LOCALIZATION - The localization setting (Optional, default: "en-US")
+ * @property {number} MIN_GAMES_SHOW - The minimum number of games to be displayed in statistics (Optional, default: 1)
  */
 export type Env = SystemEnv & Localization & MinGamesShow;
 
@@ -7,17 +12,8 @@ export type Env = SystemEnv & Localization & MinGamesShow;
  * Environment variables mandatory for scripts working properly
  */
 export type SystemEnv = {
-  /**
-   * Folder path where hand history files exists
-   */
   HAND_HISTORY_FOLDER_PATH: string;
-  /**
-   * Folder path where tournament summary files exists
-   */
   TOURNAMENT_STATISTICS_FOLDER_PATH: string;
-  /**
-   * Player (account) name
-   */
   PLAYER_NAME: string;
 };
 
@@ -25,10 +21,6 @@ export type SystemEnv = {
  * Localization for numbers etc (Optional value, default value "en-US")
  */
 type Localization = {
-  /**
-   * Localization for numbers (e.g. "fi-FI", "en-US", "de-DE", etc).
-   * Default value "en-US"
-   */
   LOCALIZATION: string;
 };
 
@@ -36,9 +28,5 @@ type Localization = {
  * Minimun amount games has to be played to be displayed in statistics
  */
 type MinGamesShow = {
-  /**
-   * Minimun amount to be played to be showed in statistics for each game.
-   * Default value 1
-   */
   MIN_GAMES_SHOW: number;
 };

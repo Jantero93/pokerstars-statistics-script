@@ -1,5 +1,5 @@
 /**
- * Poker games script can detect
+ * Poker games
  */
 export enum PokerGame {
   "Tempest Hold'em No Limit" = "Tempest Hold'em No Limit",
@@ -18,7 +18,7 @@ export enum PokerGame {
 }
 
 export const createKnownGamesList = (): PokerGame[] =>
-  Array.from(new Set(Object.values(PokerGame)));
+  Array.from(Object.values(PokerGame));
 
 /**
  * @returns {string} Find longest string of known games
@@ -35,7 +35,7 @@ export type PokerGameRecord = Record<PokerGame, number>;
  * @returns {PokerGameRecord} Initialize record of pokergame and number
  */
 export const createPokerGamesNumberRecord = (): PokerGameRecord =>
-  Object.keys(PokerGame).reduce((acc, key) => {
-    acc[key as PokerGame] = 0;
-    return acc;
-  }, {} as PokerGameRecord);
+  Object.keys(PokerGame).reduce(
+    (acc, key) => ((acc[key as PokerGame] = 0), acc),
+    {} as PokerGameRecord
+  );

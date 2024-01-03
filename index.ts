@@ -7,8 +7,7 @@ const disableLoggingForBuildPhase = () => {
    * When script is executed outside building phase HIDE_LOGGING is not set.
    * More information on build.mjs file on project root
    */
-  const hideLogging = process.env.HIDE_LOGGING === 'true';
-  if (hideLogging) {
+  if (process.env.HIDE_LOGGING === 'true') {
     console.log = () => undefined;
   }
 };

@@ -49,7 +49,7 @@ Earnings compared to costs    62,69 %
 
 ## Environment variables and requirements
 
-You need Node 17 (lower versions may be okay, not tested). The script may not work with Node >= 20.0.6 because env is built-in.
+You need Node 17 (lower versions may be okay, not tested). The script may not work with Node >= 20.0.6 because dotenv is built-in.
 
 If you have PokerStars installed on the default path and only one player account, the script will attempt to automatically detect the necessary environment variables if none are set. Otherwise, you need to set folder paths and player name manually in the .env file on the project root.
 
@@ -70,7 +70,7 @@ PLAYER_NAME="Player-name"
 
 # Optional, default value "en-US"
 # This can be removed
-LOCALIZATION="de-DE"
+LOCALIZATION="fi-FI"
 
 # Optional, don't show games played under n hands
 # By default show all games which are played even once
