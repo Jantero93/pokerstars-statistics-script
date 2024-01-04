@@ -25,9 +25,9 @@ const executeTournamentHistory = () => {
 };
 
 /**
- * Gets and calculates all tournament statistics
+ * Gets and calculates all tournament statistics 
  * @param folderPath Folder path where all tournament statistics files exist
- * @returns {TournamentStats} Full tournament statistics
+ * @returns Full tournament statistics
  */
 const getTournamentStats = (folderPath: string): TournamentStats => {
   const tournamentFilePaths: string[] =
@@ -42,7 +42,7 @@ const getTournamentStats = (folderPath: string): TournamentStats => {
 /**
  * Reads tournament statistics from a single file
  * @param filePath Absolute file path
- * @returns {TournamentStats} Tournament statistics for one file
+ * @returns Tournament statistics for one file
  */
 const calcStatsFromFile = (filePath: string): TournamentStats => {
   const lines = FileHandler.getContentLinesFromFile(filePath);
@@ -58,7 +58,7 @@ const calcStatsFromFile = (filePath: string): TournamentStats => {
 /**
  * Combines each file's tournament statistics as one record
  * @param recordList List of each file's tournament stats
- * @returns {TournamentStats} Full tournament statistics
+ * @returns Full tournament statistics
  */
 const calculateTotalStats = (recordList: TournamentStats[]): TournamentStats =>
   recordList.reduce(

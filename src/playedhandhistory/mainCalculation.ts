@@ -27,7 +27,7 @@ const executePlayHandHistory = () => {
 
 /**
  * @param folderPath Folder path where all hand history files exists
- * @returns {PokerGameRecord} Get all played hands by game
+ * @returns Get all played hands by game
  */
 const readAllHandHistoryFiles = (folderPath: string): PokerGameRecord => {
   const filePathList: string[] = FileHandler.getFilePathsFromFolder(folderPath);
@@ -42,7 +42,7 @@ const readAllHandHistoryFiles = (folderPath: string): PokerGameRecord => {
 
 /**
  * @param filePath File path where to read the content
- * @returns {string[]} Array of lines. Redudant lines are filtered
+ * @returns Array of lines. Redudant lines are filtered
  */
 const getHandLinesFromFile = (filePath: string): string[] => {
   const headerText = 'PokerStars Hand #';
@@ -56,7 +56,7 @@ const getHandLinesFromFile = (filePath: string): string[] => {
 /**
  * Get's played hands from one file
  * @param handLineTexts Array of text lines containing the information of played games
- * @returns {PokerGameRecord} Played games stats
+ * @returns Played games stats
  */
 const calculatePlayedHands = (handLineTexts: string[]): PokerGameRecord => {
   const playedGamesRecord = createPokerGamesNumberRecord();

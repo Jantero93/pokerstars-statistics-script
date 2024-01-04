@@ -8,7 +8,7 @@ import {
 import { Env } from './types';
 
 /**
- * @returns {Env} Environment variables. First checks from .env
+ * @returns Environment variables. First checks from .env
  * file and then try to detect from os
  * @throws If can not get environment
  * which are needed to execute statistics scripts

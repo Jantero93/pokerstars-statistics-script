@@ -5,7 +5,7 @@ import { SystemEnv } from '../types';
 
 /**
  * Try to get essential environment variables from system
- * @returns {SystemEnv | null} Return null if can not detenct environment
+ * @returns Return null if can not detenct environment
  * variables from system
  */
 const getEnvValuesFromOs = (): SystemEnv | null => {
@@ -45,7 +45,7 @@ const getEnvValuesFromOs = (): SystemEnv | null => {
 /**
  * @param handHistoryPath Hand history folder path.
  * This folder includes player/accounts history folders
- * @returns {string | null} Folder name which equals player name.
+ * @returns Folder name which equals player name.
  *
  * If hand history folder contains multiple folders then first one will be picked
  */
