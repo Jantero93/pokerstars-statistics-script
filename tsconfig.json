@@ -1,5 +1,13 @@
 {
-  "include": ["./**/*.ts", "copy-env.mjs"],
+  "include": ["./**/*.ts"],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "__tests__",
+    "__mocks__",
+    "jest.config.ts",
+    "copy-env.mjs"
+  ],
   "compilerOptions": {
     /* Visit https://aka.ms/tsconfig to read more about this file */
 

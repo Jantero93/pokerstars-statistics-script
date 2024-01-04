@@ -1,8 +1,6 @@
 import * as fs from 'fs';
 import * as path from 'path';
-
-const POKERSTARS_FILE_LINEBREAK = '\r\n';
-const POKERSTARS_FILE_ENCODING = 'utf8';
+import { POKERSTARS_FILE_LINEBREAK } from '../../globalConsts';
 
 /**
  * @param dirPath Path to directory where history files are
@@ -19,7 +17,10 @@ const getFilePathsFromFolder = (dirPath: string): string[] =>
  * @returns Array of lines (linebreak hard coded \r\n)
  */
 const getContentLinesFromFile = (filePath: string): string[] => {
+  const POKERSTARS_FILE_ENCODING = 'utf8';
+
   const content = fs.readFileSync(filePath, POKERSTARS_FILE_ENCODING);
+
   return content.split(POKERSTARS_FILE_LINEBREAK);
 };
 

@@ -8,7 +8,12 @@ import type { Config } from 'jest';
 const config: Config = {
   clearMocks: true,
   coverageDirectory: 'coverage',
-  coverageReporters: ['json', 'text', 'html', 'lcov', 'clover']
+  coverageReporters: ['json', 'text', 'html', 'lcov', 'clover'],
+  testPathIgnorePatterns: [
+    '<rootDir>/__tests__/testData',
+    '<rootDir>/dist',
+    '<rootDir>/node_modules'
+  ]
   // All imported modules in your tests should be mocked automatically
   // automock: false,
 
@@ -35,14 +40,6 @@ const config: Config = {
 
   // Indicates which provider should be used to instrument code for coverage
   // coverageProvider: "babel",
-
-  // A list of reporter names that Jest uses when writing coverage reports
-  // coverageReporters: [
-  //   "json",
-  //   "text",
-  //   "lcov",
-  //   "clover"
-  // ],
 
   // An object that configures minimum threshold enforcement for coverage results
   // coverageThreshold: undefined,

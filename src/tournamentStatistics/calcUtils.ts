@@ -1,6 +1,6 @@
 import { TournamentStats } from '../types/tournament';
 import ENV from '../utils/env/main';
-import { EMPTY_STRING } from '../../globalConsts.js';
+import { EMPTY_STRING, SPACE } from '../../globalConsts.js';
 
 /**
  * Calculate helpers for each tournament file stats
@@ -10,7 +10,7 @@ export const calcWinSum = (lines: string[]): number => {
     .map((line) => line.trim())
     .find((line) => line.includes(ENV.PLAYER_NAME));
 
-  const parts = playerLine?.split(' ');
+  const parts = playerLine?.split(SPACE);
   if (!parts || parts.length < 4) return 0;
 
   const win = Number(parts[3].split(',').join(EMPTY_STRING));
@@ -34,7 +34,7 @@ export const calcReEntriesSum = (lines: string[]): number => {
   const reEntryLine = lines.find((line) => line.includes('re-entries'));
   if (!reEntryLine) return 0;
 
-  return Number(reEntryLine.split(' ')[8].split(',').join(EMPTY_STRING));
+  return Number(reEntryLine.split(SPACE)[8].split(',').join(EMPTY_STRING));
 };
 
 export const didWinTournament = (lines: string[]) =>

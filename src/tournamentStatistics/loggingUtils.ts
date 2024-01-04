@@ -1,3 +1,4 @@
+import { SPACE } from '../../globalConsts';
 import ENV from '../utils/env/main';
 import logger, { ConsoleColor } from '../utils/logger';
 
@@ -24,7 +25,7 @@ export const logWithSpacing = (
   labelsData: Record<string, { value: string | number }>,
   color?: ConsoleColor
 ): void => {
-  const labelSpacing = ' '.repeat(
+  const labelSpacing = SPACE.repeat(
     Math.max(0, getMaxLabelLength(labelsData) - label.length + 2)
   );
 

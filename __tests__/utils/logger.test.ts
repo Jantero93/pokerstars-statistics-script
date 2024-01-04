@@ -1,11 +1,9 @@
 import logger, { ConsoleColor, LogInput } from '../../src/utils/logger';
-// Mock console.log to capture output
-const mockConsoleLog = jest.spyOn(console, 'log');
 
-beforeEach(() => {
-  // Clear console.log mock between tests
-  mockConsoleLog.mockClear();
-});
+// Prevent actual logging when running tests
+const mockConsoleLog = jest.spyOn(console, 'log').mockImplementation();
+
+beforeEach(() => mockConsoleLog.mockClear());
 
 describe('Custom logger tests', () => {
   it('Logs input without color', () => {

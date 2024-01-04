@@ -11,6 +11,7 @@ import {
 import { localizeNumber } from '../utils/stringUtils';
 import { calcAllHandsPlayed } from './calcUtils';
 import { createLinebreak, createLoggingOutput } from './loggingUtils';
+import { SPACE } from '../../globalConsts';
 
 /**
  * Array of unrecognized hands
@@ -116,7 +117,7 @@ const logPlayedHands = (stats: PokerGameRecord) => {
 
   /** Get total sum of played hands strings */
   const allPlayedHeader = 'All played hands';
-  const headerSpaces = ' '.repeat(
+  const headerSpaces = SPACE.repeat(
     findLongestGameName().length - allPlayedHeader.length + 2
   );
   const allPlayedString = `${allPlayedHeader}${headerSpaces}${localizeNumber(
