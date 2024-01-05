@@ -1,6 +1,8 @@
 # PokerStars Statistics
 
-This script is designed to track poker game history and uses `console.log` to print statistics only to the terminal.
+This script is designed to track poker game history and uses `console.log` to print statistics to the terminal.
+
+**This script supports only play money**
 
 ## Supported Games
 

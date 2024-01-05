@@ -29,14 +29,14 @@ describe('Tournament Stats Utils', () => {
       expect(winSum).toBe(82_875);
     });
 
-    it('should return 0 if player line is not found', () => {
+    it('Should return 0 if player line is not found', () => {
       const winSum = calcWinSum(lostTournamentLines);
       expect(winSum).toBe(0);
     });
   });
 
   describe('#1 SNG, 21 250 / 3750 = 25 000', () => {
-    it('should calculate the correct buy-in sum', () => {
+    it('Should calculate the correct buy-in sum', () => {
       expect(calcBuyIn(wonTournamentLines)).toBe(25_000);
     });
 
@@ -72,8 +72,8 @@ describe('Tournament Stats Utils', () => {
 
     it('Should return win percentage 33,33 % (1/3)', () => {
       const winPercentage = calcTournamentWinPercentage(testTournamentStats2);
-      expect(winPercentage).toBeLessThan(34);
-      expect(winPercentage).toBeGreaterThan(33);
+      expect(winPercentage).toBeLessThan(33.4);
+      expect(winPercentage).toBeGreaterThan(33.3);
     });
   });
 
@@ -84,11 +84,11 @@ describe('Tournament Stats Utils', () => {
       expect(compared).toBe(200);
     });
 
-    it('Tournament earnings/costings 7 000 / 12 000', () => {
+    it('Tournament earnings/costings 7 000 / 12 000 => ~ -41,66... %', () => {
       const { buyIns, earnings } = testTournamentStats2;
       const compared = calcEarningComparedToCosts(buyIns, earnings);
-      expect(compared).toBeLessThan(-41);
-      expect(compared).toBeGreaterThan(-42);
+      expect(compared).toBeLessThan(-41.6);
+      expect(compared).toBeGreaterThan(-41.7);
     });
   });
 });

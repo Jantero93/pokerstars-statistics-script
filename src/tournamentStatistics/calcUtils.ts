@@ -21,13 +21,21 @@ export const calcWinSum = (lines: string[]): number => {
 export const calcBuyIn = (lines: string[]): number => {
   const buyInRaw = lines.find((line) => line.includes('Buy-In'))?.split(':')[1];
 
-  if (!buyInRaw) {
-    throw new Error(`Could not find buy-in for the tournament, lines:\n
-      ${lines}`);
+  if (buyInRaw) {
+    const [buyIn, rake] = buyInRaw.split('/').map(Number);
+    return buyIn + rake;
   }
 
-  const [buyIn, rake] = buyInRaw.split('/').map(Number);
-  return buyIn + rake;
+  const isFreerollTournament = lines.find((line) =>
+    line.toLowerCase().includes('freeroll')
+  );
+
+  if (isFreerollTournament) {
+    return 0;
+  }
+
+  throw new Error(`Could not find buy-in for the tournament, lines:\n
+    ${lines}`);
 };
 
 export const calcReEntriesSum = (lines: string[]): number => {
