@@ -98,7 +98,7 @@ const logStatistics = (stats: TournamentStats) => {
     'Winning percentage': { value: winPercentageString },
     'Earned money': { value: localizeNumber(earnings) },
     'Paid buy-ins (and rebuys)': { value: localizeNumber(buyIns) },
-    'Diff on buy-ins and winnings': {
+    'Profit': {
       value: localizeNumber(winBuyInsDiff),
       color: 'cyan'
     },

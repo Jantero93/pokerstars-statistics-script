@@ -84,6 +84,8 @@ Run the following commands in the root to install dependencies and build the pro
 
 ```bash
 npm install
+```
+```bash
 npm run build
 ```
 To run the statistics, use the command:
