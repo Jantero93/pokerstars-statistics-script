@@ -1,5 +1,7 @@
+# debugging
 test.txt
 output.txt
+output.json
 executable
 .env
 node_modules/
