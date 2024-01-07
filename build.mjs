@@ -27,7 +27,7 @@ const execBuild = () => {
 };
 
 /**
- * Deletes dist folder if someone of build fails
+ * Deletes dist folder if some of build phases fails
  * @returns {boolean} Retuns true if delete is successful
  */
 const deleteDistFolder = () => {

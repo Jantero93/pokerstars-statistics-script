@@ -45,7 +45,7 @@ export const calcReEntriesSum = (lines: string[]): number => {
   return Number(reEntryLine.split(SPACE)[8].split(',').join(EMPTY_STRING));
 };
 
-export const didWinTournament = (lines: string[]) =>
+export const didWinTournament = (lines: string[]): boolean =>
   lines.some((line) => line.includes('You finished in 1st place'));
 
 /**

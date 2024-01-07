@@ -1,6 +1,8 @@
 import { SPACE } from '../../globalConsts';
-import ENV from '../utils/env/main';
+import { LoggingOutput } from '../types/tournament';
 import logger, { ConsoleColor } from '../utils/logger';
+
+const SPACE_BETWEEN_LABEL_AND_VALUE = 2;
 
 /**
  * @param labelsData Get's longest header length
@@ -21,16 +23,28 @@ export const getMaxLabelLength = (
  */
 export const logWithSpacing = (
   label: string,
-  value: string | number,
-  labelsData: Record<string, { value: string | number }>,
+  value: string,
+  labelsData: LoggingOutput,
   color?: ConsoleColor
 ): void => {
   const labelSpacing = SPACE.repeat(
-    Math.max(0, getMaxLabelLength(labelsData) - label.length + 2)
+    getMaxLabelLength(labelsData) - label.length + SPACE_BETWEEN_LABEL_AND_VALUE
   );
 
-  return logger(
-    label + labelSpacing + value.toLocaleString(ENV.LOCALIZATION),
-    color
-  );
+  logger(label + labelSpacing + value, color);
 };
+
+/**
+ * TODO: Not creating correct lenght of dashes in main function, maybe related to localization, now hard coded +2 for own need
+ * @param logs Logging output
+ * @returns Count of longest log string (value + header)
+ */
+export const getLongestLogStringCount = (logs: LoggingOutput): number =>
+  Object.entries(logs).reduce(
+    (longestString, [key, { value }]) =>
+      Math.max(
+        longestString,
+        key.length + value.length + SPACE_BETWEEN_LABEL_AND_VALUE + 2
+      ),
+    0
+  );

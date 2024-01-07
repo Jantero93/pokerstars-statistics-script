@@ -1,22 +1,20 @@
+import { ConsoleColor } from '../utils/logger';
+
 /***
  * General statistics type for tournament and sit & go's
  */
+
+/**
+ * @type {TournamentStats} - Tournament statistics including SNG's and tournaments
+ * @property buyIns - Sum of costs (buy-in + rake)
+ * @property earning - Earnings from
+ * @property tournamentCount - How many SNG's or tournaments have played
+ * @property tournamentWins - How many tournament have won
+ */
 export type TournamentStats = {
-  /**
-   * Spend money in buy-ins (and rakes)
-   */
   buyIns: number;
-  /**
-   * Money won by tournaments / sit & go's
-   */
   earnings: number;
-  /**
-   * Count of played tournaments / sit & go's
-   */
   tournamentCount: number;
-  /**
-   * Count of tournament / sit & go wins
-   */
   tournamentWins: number;
 };
 
@@ -29,3 +27,14 @@ export const createTournamentStatsObject = (): TournamentStats => ({
   tournamentCount: 0,
   tournamentWins: 0
 });
+
+/**
+ * Final logging type
+ * @property {PokerGame} key - Game name
+ * @property value - Logged string text
+ * @property color? - Colorize output on console, optional
+ */
+export type LoggingOutput = Record<
+  string,
+  { value: string; color?: ConsoleColor }
+>;
