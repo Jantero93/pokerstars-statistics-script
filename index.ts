@@ -24,8 +24,8 @@ const exec = () => {
 
   try {
     ExecHandHistory();
-    ExecTournamentHistory();
     ExecCashgameEarnings();
+    ExecTournamentHistory();
   } catch (e) {
     const msg = e instanceof Error ? e.message : e;
     console.error(`Error on executing scripts, error message:\n${msg}`);

@@ -5,8 +5,9 @@
  * @property {string} PLAYER_NAME - The name of the player/account
  * @property {string} LOCALIZATION - The localization setting (Optional, default: "en-US")
  * @property {number} MIN_GAMES_SHOW - The minimum number of games to be displayed in statistics (Optional, default: 1)
+ * @property {number} EARNINGS_AMOUNT_SHOW - Show over +/- amounts in earnings (Optional, default 0)
  */
-export type Env = SystemEnv & Localization & MinGamesShow;
+export type Env = SystemEnv & Localization & MinGamesShow & MinEarningsShow;
 
 /**
  * Environment variables mandatory for scripts working properly
@@ -29,4 +30,8 @@ type Localization = {
  */
 type MinGamesShow = {
   MIN_GAMES_SHOW: number;
+};
+
+type MinEarningsShow = {
+  EARNINGS_AMOUNT_SHOW: number;
 };

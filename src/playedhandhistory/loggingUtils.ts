@@ -3,18 +3,32 @@ import { PokerGameRecord, findLongestGameName } from '../types/general';
 import { localizeNumber } from '../utils/stringUtils';
 import { SPACE } from '../../globalConsts';
 
-export const createLoggingOutput = (stats: PokerGameRecord): string[] =>
+export const createLoggingOutputPlayedHands = (
+  stats: PokerGameRecord
+): string[] =>
+  Object.entries(stats)
+    .filter(([_game, value]) => value >= ENV.MIN_GAMES_SHOW)
+    .map(([game, playedHandsCount]) => {
+      const spaces = SPACE.repeat(
+        findLongestGameName().length - game.length + 2
+      );
+      return `${game}${spaces}${localizeNumber(playedHandsCount)}`;
+    });
+
+export const createLoggingOutputEarnings = (stats: PokerGameRecord): string[] =>
   Object.entries(stats)
     .filter(
-      ([_game, playedHandsCount]) => playedHandsCount >= ENV.MIN_GAMES_SHOW
+      ([_game, amount]) =>
+        amount < -ENV.EARNINGS_AMOUNT_SHOW || amount > ENV.EARNINGS_AMOUNT_SHOW
     )
     .map(([game, playedHandsCount]) => {
-      const spaces = SPACE.repeat(findLongestGameName().length - game.length + 2);
+      const spaces = SPACE.repeat(
+        findLongestGameName().length - game.length + 2
+      );
       return `${game}${spaces}${localizeNumber(playedHandsCount)}`;
     });
 
 export const createLinebreak = (logStrings: string[]): string => {
-  /** linebreak */
   const dashCharacter = '-';
   const longestLogStringLenght = logStrings.reduce(
     (maxLength, currentString) => Math.max(maxLength, currentString.length),

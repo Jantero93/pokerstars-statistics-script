@@ -15,3 +15,6 @@ export const getMinimunPlaysToShowEnv = (): number =>
 export const getLocalizationEnv = (): string =>
   process.env.LOCALIZATION ??
   getUserLocale({ useFallbackLocale: true, fallbackLocale: 'en-US' });
+
+export const getMinimunEarningsToShowEnv = (): number =>
+  Number(process.env.EARNINGS_AMOUNT_SHOW) || 0;

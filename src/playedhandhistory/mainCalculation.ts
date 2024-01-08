@@ -10,7 +10,7 @@ import {
 } from '../types/general';
 import { localizeNumber } from '../utils/stringUtils';
 import { calcAllHandsPlayed } from './calcUtils';
-import { createLinebreak, createLoggingOutput } from './loggingUtils';
+import { createLinebreak, createLoggingOutputPlayedHands } from './loggingUtils';
 import { SPACE } from '../../globalConsts';
 
 /**
@@ -111,7 +111,7 @@ const logPlayedHands = (stats: PokerGameRecord) => {
   const allPlayedHandsCount = calcAllHandsPlayed(stats);
 
   /** Create logging strings by each game */
-  const logStrings = createLoggingOutput(stats);
+  const logStrings = createLoggingOutputPlayedHands(stats);
   /** Create linebreak based on longest output string */
   const linebreak = createLinebreak(logStrings);
 

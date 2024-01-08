@@ -3,7 +3,8 @@ import getEnvFromOs from './envGetters/envGetterOs';
 import getEnvFromFile from './envGetters/envGetterFile';
 import {
   getMinimunPlaysToShowEnv,
-  getLocalizationEnv
+  getLocalizationEnv,
+  getMinimunEarningsToShowEnv
 } from './envGetters/otherEnvGetters';
 import { Env } from './types';
 
@@ -19,6 +20,7 @@ const getEnv = (): Env => {
   // Get optional environment variables
   const localizationLanguage = getLocalizationEnv();
   const minAmountShowPlaysInStats = getMinimunPlaysToShowEnv();
+  const minEarningsShowInStats = getMinimunEarningsToShowEnv();
 
   const systemEnvsFile = getEnvFromFile();
 
@@ -26,7 +28,8 @@ const getEnv = (): Env => {
     const allEnv = {
       ...systemEnvsFile,
       MIN_GAMES_SHOW: minAmountShowPlaysInStats,
-      LOCALIZATION: localizationLanguage
+      LOCALIZATION: localizationLanguage,
+      EARNINGS_AMOUNT_SHOW: minEarningsShowInStats
     };
 
     return allEnv;
@@ -46,7 +49,8 @@ const getEnv = (): Env => {
   return {
     ...envsGetAutomatically,
     MIN_GAMES_SHOW: minAmountShowPlaysInStats,
-    LOCALIZATION: localizationLanguage
+    LOCALIZATION: localizationLanguage,
+    EARNINGS_AMOUNT_SHOW: minEarningsShowInStats
   };
 };
 

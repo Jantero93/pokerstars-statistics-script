@@ -4,11 +4,20 @@ import { ParsedGameRawData } from './types';
 import {
   PokerGame,
   PokerGameRecord,
-  createPokerGamesNumberRecord
+  createPokerGamesNumberRecord,
+  findLongestGameName
 } from '../types/general';
 import * as CalcUtils from './calculateUtils';
 import ENV from '../utils/env/main';
 import Filereader from '../utils/filereader';
+import logger from '../utils/logger';
+import {
+  createLinebreak,
+  createLoggingOutputEarnings,
+  createLoggingOutputPlayedHands
+} from '../playedhandhistory/loggingUtils';
+import { SPACE } from '../../globalConsts';
+import { localizeNumber } from '../utils/stringUtils';
 
 const executeCashGameEarnings = () => {
   const stats = readAllHandHistoryFiles(ENV.HAND_HISTORY_FOLDER_PATH);
@@ -39,7 +48,7 @@ const calculateEarningsFromFiles = (
   const singleRecord = fileRecords.reduce((result, record) => {
     Object.keys(record).forEach((key) => {
       result[key as PokerGame] =
-        (result[key as PokerGame] || 0) + record[key as PokerGame];
+        result[key as PokerGame] + record[key as PokerGame];
     });
     return result;
   }, createPokerGamesNumberRecord());
@@ -81,10 +90,28 @@ const calculateEarnings = (data: ParsedGameRawData[]): PokerGameRecord => {
   return stats;
 };
 
+const calculateTotalProfit = (stats: PokerGameRecord): number =>
+  Object.values(stats).reduce((sum, count) => sum + count, 0);
+
 const logEarnings = (stats: PokerGameRecord) => {
-  console.log('********************************');
-  console.log(stats);
-  console.log('********************************');
+  const totalProfit = calculateTotalProfit(stats);
+
+  const logStrings = createLoggingOutputEarnings(stats);
+  const linebreak = createLinebreak(logStrings);
+
+  const totalProfitHeader = 'Total Profit';
+  const headerSpaces = SPACE.repeat(
+    findLongestGameName().length - totalProfitHeader.length + 2
+  );
+  const totalProfitLogOutput = `${totalProfitHeader}${headerSpaces}${localizeNumber(
+    totalProfit
+  )}`;
+
+  // Log everything
+  logger('\n--- Cashgame earnings ---', 'magenta');
+  logStrings.forEach((logString) => logger(logString));
+  logger(linebreak);
+  logger(totalProfitLogOutput, 'cyan');
 };
 
 export default executeCashGameEarnings;
