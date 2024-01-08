@@ -1,5 +1,8 @@
 import { PokerGame } from '../types/general';
 
+/**
+ * Contains PokerGame as key and actions in string array
+ */
 export type ParsedGameRawData = [PokerGame, string[]];
 
 // laske onko pelaaja collectanut potin

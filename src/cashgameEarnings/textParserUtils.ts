@@ -8,7 +8,9 @@ import { ParsedGameRawData, createKeywordList } from './types';
  * @param lines - Raw lines from files
  * @returns Return array of arrays where each sub array is one hand history in string lines
  */
-export const extractHandBlocksFromRaw = (lines: string[]): string[][] => {
+export const extractHandBlocksFromRaw = (
+  lines: string[]
+): ParsedGameRawData[] => {
   const handBlocks: string[][] = [];
   let currentBlock: string[] = [];
   let skipSummary = false;
@@ -37,10 +39,14 @@ export const extractHandBlocksFromRaw = (lines: string[]): string[][] => {
     handBlocks.push([...currentBlock]);
   }
 
-  return handBlocks;
+  return convertRawBlockToKnownGame(handBlocks);
 };
 
-export const convertRawBlockToKnownGame = (
+/**
+ * @param rawBlockLines - Parsed hand text blocks without summary lines
+ * @returns More parsed, contains only player actions which are used on calculations. Filters tournament played hands.
+ */
+const convertRawBlockToKnownGame = (
   rawBlockLines: string[][]
 ): ParsedGameRawData[] => {
   const onlyCashGameHands = rawBlockLines.filter((handBlock) => {
