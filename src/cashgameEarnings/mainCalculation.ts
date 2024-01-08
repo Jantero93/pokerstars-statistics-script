@@ -10,7 +10,9 @@ const executeCashgameEarnings = () => {
 
   const handBlocks = TextUtils.extractHandBlocksFromRaw(lines);
 
-  fs.writeFileSync('output.json', JSON.stringify(handBlocks));
+  const test = TextUtils.convertRawBlockToKnownGame(handBlocks);
+
+  fs.writeFileSync('output.json', JSON.stringify(test));
 };
 
 export default executeCashgameEarnings;

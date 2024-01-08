@@ -17,3 +17,8 @@ exports.SPACE = ' ';
  * @type {string} - '\r\n'
  */
 exports.POKERSTARS_FILE_LINEBREAK = '\r\n'
+
+/**
+ * @type {string} - Hand history block starting line
+ */
+exports.POKERSTARS_HANDHISTORY_HEADER = "PokerStars Hand #"
