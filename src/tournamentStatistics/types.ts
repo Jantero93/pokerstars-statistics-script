@@ -16,6 +16,7 @@ export type TournamentStats = {
   earnings: number;
   tournamentCount: number;
   tournamentWins: number;
+  rake: number;
 };
 
 /**
@@ -25,7 +26,8 @@ export const createTournamentStatsObject = (): TournamentStats => ({
   buyIns: 0,
   earnings: 0,
   tournamentCount: 0,
-  tournamentWins: 0
+  tournamentWins: 0,
+  rake: 0
 });
 
 /**

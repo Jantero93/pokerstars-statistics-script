@@ -1,4 +1,4 @@
-import { TournamentStats } from '../types/tournament';
+import { TournamentStats } from './types';
 import ENV from '../utils/env/main';
 import { EMPTY_STRING, SPACE } from '../../globalConsts.js';
 
@@ -35,6 +35,26 @@ export const calcBuyIn = (lines: string[]): number => {
   }
 
   throw new Error(`Could not find buy-in for the tournament, lines:\n
+    ${lines}`);
+};
+
+export const getRake = (lines: string[]): number => {
+  const buyInRaw = lines.find((line) => line.includes('Buy-In'))?.split(':')[1];
+
+  if (buyInRaw) {
+    const [_buyIn, rake] = buyInRaw.split('/').map(Number);
+    return rake;
+  }
+
+  const isFreerollTournament = lines.find((line) =>
+    line.toLowerCase().includes('freeroll')
+  );
+
+  if (isFreerollTournament) {
+    return 0;
+  }
+
+  throw new Error(`Could not find rake (or freeroll marker) for the tournament, lines:\n
     ${lines}`);
 };
 

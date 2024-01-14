@@ -1,5 +1,5 @@
 import { SPACE } from '../../globalConsts';
-import { LoggingOutput } from '../types/tournament';
+import { LoggingOutput } from './types';
 import logger, { ConsoleColor } from '../utils/logger';
 
 const SPACE_BETWEEN_LABEL_AND_VALUE = 2;
