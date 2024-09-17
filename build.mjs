@@ -1,102 +1,99 @@
 import { execaSync } from 'execa';
 import { rimrafSync } from 'rimraf';
 import runEnvFileMover from './copy-env.mjs';
-import { EMPTY_STRING, ISSUE_LINK } from './globalConsts.js'
+import { EMPTY_STRING, ISSUE_LINK } from './globalConsts.js';
+
+const DIST_FOLDER = './dist';
 
 /**
  * Entry point for building project
  * @returns {void}
  */
 const execBuild = () => {
-  const isCompileSuccesful = runCompile();
-  const isEnvFileMovedSuccesful = runEnvFileMover();
-  const isScriptWorkingSuccesfully = runCheckScriptWorks();
-
-  const buildCompleted =
-    isCompileSuccesful &&
-    isEnvFileMovedSuccesful &&
-    isScriptWorkingSuccesfully;
-
-  if (!buildCompleted) {
-    printGenericErrorMsg();
-    deleteDistFolder();
+  if (!compileProject() || !runEnvFileMover() || !runProjectScript()) {
+    handleBuildFailure();
     return;
   }
 
-  console.info('Project builded successfully');
+  console.info('Project built successfully');
 };
 
 /**
- * Deletes dist folder if some of build phases fails
- * @returns {boolean} Retuns true if delete is successful
+ * Deletes the dist folder.
+ * @returns {boolean} Returns true if delete is successful
  */
 const deleteDistFolder = () => {
   try {
-    rimrafSync('./dist', { glob: false });
+    rimrafSync(DIST_FOLDER, { glob: false });
     return true;
   } catch (error) {
-    console.error(`Error on removing dist folder:\n${error}`);
+    logError(`Error deleting dist folder:`, error);
     return false;
   }
 };
 
 /**
- * Compiles TypeScript files to JavaScript files
- *
- * Deletes dist folder and compiles typescript files and recreates dist folder
+ * Compiles TypeScript files to JavaScript.
+ * Deletes dist folder, compiles TypeScript files, and recreates dist folder.
  * @returns {boolean} True if command was executed successfully
  */
-const runCompile = () => {
+const compileProject = () => {
   try {
     deleteDistFolder();
+    const { stderr, exitCode } = execaSync('tsc', []);
 
-    const compileResult = execaSync('tsc', []);
-    const err = compileResult.stderr;
-
-    err && console.error(err)
-
-    return err === EMPTY_STRING && compileResult.exitCode === 0;
+    if (stderr) logError(stderr);
+    return stderr === EMPTY_STRING && exitCode === 0;
   } catch (error) {
-    console.error(error);
+    logError('Compilation error:', error);
     return false;
   }
 };
 
 /**
- * Runs normal statistics script(s) without any logging
- * @returns {boolean} Return true if scripts runs without any throwable error
+ * Runs the main script to check if it works without errors.
+ * @returns {boolean} Returns true if script runs without errors
  */
-const runCheckScriptWorks = () => {
-  /**  Disable logging from main scripts for building phase
-   This is connected in entry point of script (index.ts) */
-  process.env.HIDE_LOGGING = 'true';
+const runProjectScript = () => {
+  process.env.HIDE_LOGGING = 'true'; // Disable logging during the build phase
 
   try {
-    // Check will normal script execution throw any error
-    const result = execaSync('node', ['dist/index.js']);
-    const err = result.stderr;
+    const { stderr, exitCode } = execaSync('node', ['dist/index.js']);
 
-    err && console.error(err);
+    if (stderr) logError(stderr);
 
-    return err === EMPTY_STRING && result.exitCode === 0;
+    return stderr === EMPTY_STRING && exitCode === 0;
   } catch (error) {
-    console.error(error);
+    logError('Script execution error:', error);
     return false;
   }
 };
 
 /**
- * Generic console log output if build fails
+ * Logs an error to the console.
+ * @param {string} message - The error message.
+ * @param {Error} [error] - Optional error object to log.
  */
-const printGenericErrorMsg = () => {
-  console.error('Project build failed');
-  console.error('Executing clean up');
+const logError = (message, error = null) => {
+  console.error(message);
 
-  console.info(`\nError probably relates to environment variables do these steps:
+  if (error) console.error(error);
+};
 
-  1: Try building project without .env file on project's root folder and then execute script
-  2: Set .env file on project's root folder and build project. There is .env.example for correct formatting
-  If you still have issues with building and running project, please open issue at ${ISSUE_LINK}`);
+/**
+ * Handles build failure by printing a generic error message and cleaning up.
+ */
+const handleBuildFailure = () => {
+  console.error('Project build failed. Executing cleanup...');
+  deleteDistFolder();
+
+  console.info(`
+Error probably relates to environment variables. Please follow these steps:
+
+1. Try building the project without the .env file in the root folder, then run the script.
+2. Set up the .env file in the root folder and rebuild the project. Use .env.example for reference.
+
+If you still encounter issues, please open an issue at ${ISSUE_LINK}`);
 };
 
 // Execute compile & build

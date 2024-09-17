@@ -1,35 +1,37 @@
 import ncp from 'ncp';
 import * as fs from 'fs';
 import * as path from 'path';
+import { promisify } from 'util';
+
+const copyFile = promisify(ncp);
 
 /**
- * Checks is there .env file in project's root folder
- * @returns {boolean} True if .env file exists in root folder of project
-*/
+ * Checks if the .env file exists in the project's root folder.
+ * @returns {boolean} True if the .env file exists in the root folder of the project.
+ */
 const checkEnvFileExists = () => {
-  const rootDir = path.dirname(import.meta.url)
+  const rootDir = path.resolve();
   const filepath = path.join(rootDir, 'dist', '.env');
   return fs.existsSync(filepath);
 };
 
 /**
- * Moves .env file to dist folder
- * @returns {boolean} True if .env file exists on root folder and is copied to dist folder.
- * Otherwise false
-*/
-const envFileMover = () => {
+ * Moves the .env file to the dist folder.
+ * @returns {Promise<boolean>} True if the .env file is successfully copied to the dist folder, otherwise false.
+ */
+const envFileMover = async () => {
   const SOURCE_PATH = './.env';
   const DESTINATION_PATH = './dist/.env';
 
-  ncp(SOURCE_PATH, DESTINATION_PATH, (err) => {
-    if (err && checkEnvFileExists()) {
-      console.error(`Error on moving env file to dist folder:
-      ${err}`);
-      return false;
+  try {
+    await copyFile(SOURCE_PATH, DESTINATION_PATH);
+    return true;
+  } catch (err) {
+    if (checkEnvFileExists()) {
+      console.error(`Error moving .env file to dist folder: ${err}`);
     }
-  });
-
-  return true;
+    return false;
+  }
 };
 
 export default envFileMover;

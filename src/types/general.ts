@@ -32,7 +32,7 @@ export const findLongestGameName = (): string =>
 export type PokerGameRecord = Record<PokerGame, number>;
 
 /**
- * @returns {PokerGameRecord} Initialize record of pokergame and number
+ * @returns {PokerGameRecord} Initialize record of poker game and number
  */
 export const createPokerGamesNumberRecord = (): PokerGameRecord =>
   Object.keys(PokerGame).reduce(

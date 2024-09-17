@@ -16,9 +16,9 @@ export const createLoggingOutput = (stats: PokerGameRecord): string[] =>
 export const createLinebreak = (logStrings: string[]): string => {
   /** linebreak */
   const dashCharacter = '-';
-  const longestLogStringLenght = logStrings.reduce(
+  const longestLogStringLength = logStrings.reduce(
     (maxLength, currentString) => Math.max(maxLength, currentString.length),
     0
   );
-  return dashCharacter.repeat(longestLogStringLenght + dashCharacter.length);
+  return dashCharacter.repeat(longestLogStringLength + dashCharacter.length);
 };
